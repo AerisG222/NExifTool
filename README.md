@@ -1,6 +1,6 @@
 #NExifTool
 
-A .Net library to wrap the functionality of DCRaw.
+A .Net library to wrap the functionality of ExifTool.
 
 ## Motivation
 To create a simple wrapper around this excellent program to allow
@@ -8,7 +8,7 @@ To create a simple wrapper around this excellent program to allow
 
 ## Using
 - Install ExifTool
-- Add a reference to NDCRaw in your project.json
+- Add a reference to NExifTool in your project.json
 - Bring down the packages for your project via `dnu restore`
 
 ```csharp
