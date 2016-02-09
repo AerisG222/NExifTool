@@ -46,11 +46,8 @@ issues to this project on the github repo.
 
 ## Todo
 I hope to make many improvements to the library as time permits.
-- Provide stronger typings for reading/writing tags, currently just strings
 - Ability to read/write specific tag(s)
 - Add tests
-- Consider defining enums for the many potential tags (ex: 
-  http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/EXIF.html)
   
 ## License
 NExifTool is licensed under the MIT license.  See LICENSE.md for more
