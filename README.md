@@ -1,3 +1,7 @@
+[![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/AerisG222/NExifTool/blob/master/LICENSE.md)
+[![NuGet](https://img.shields.io/nuget/dt/NExifTool.svg)](https://www.nuget.org/packages/NExifTool/)
+[![NuGet](https://img.shields.io/nuget/v/NExifTool.svg)](https://www.nuget.org/packages/NExifTool/)
+
 #NExifTool
 
 A .Net library to wrap the functionality of ExifTool.
