@@ -7,22 +7,22 @@ using System.Threading.Tasks;
 
 namespace NExifTool
 {
-	public class ExifTool
-	{
+    public class ExifTool
+    {
         static readonly string[] SEP_ROW = new string[] { "\n", "\r" };
-		static readonly string[] SEP_COL = new string[] { "\t" };
+        static readonly string[] SEP_COL = new string[] { "\t" };
         static readonly string[] SEP_GROUP = new string[] { ":" };
         
         
         public ExifToolOptions Options { get; private set; }
         
         
-		public ExifTool(ExifToolOptions options)
+        public ExifTool(ExifToolOptions options)
         {
             Options = options;
         }
-		
-		
+        
+        
         public IEnumerable<Tag> GetTags(string srcPath)
         {
             return GetTagsAsync(srcPath).Result;
@@ -32,9 +32,9 @@ namespace NExifTool
         public async Task<IEnumerable<Tag>> GetTagsAsync(string srcPath)
         {
             if(!File.Exists(srcPath))
-			{
-				throw new FileNotFoundException("Please make sure the image exists.", srcPath);
-			}
+            {
+                throw new FileNotFoundException("Please make sure the image exists.", srcPath);
+            }
             
             var output = await RunProcessAsync(srcPath);
              
@@ -44,10 +44,10 @@ namespace NExifTool
         
         IEnumerable<Tag> ParseOutput(string output)
         {
-			var lines = output.Split(SEP_ROW, StringSplitOptions.RemoveEmptyEntries);
-			
-			foreach(var line in lines)
-			{
+            var lines = output.Split(SEP_ROW, StringSplitOptions.RemoveEmptyEntries);
+            
+            foreach(var line in lines)
+            {
                 var cols = line.Split(SEP_COL, StringSplitOptions.RemoveEmptyEntries);
                 var tag = new Tag();
                 
@@ -86,7 +86,7 @@ namespace NExifTool
                 }
                 
                 yield return tag;
-			}
+            }
         }
         
         
@@ -113,5 +113,5 @@ namespace NExifTool
 
             return tcs.Task;
         }
-	}
+    }
 }
