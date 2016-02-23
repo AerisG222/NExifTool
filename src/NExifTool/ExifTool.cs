@@ -9,9 +9,7 @@ namespace NExifTool
 {
     public class ExifTool
     {
-        static readonly string[] SEP_ROW = new string[] { "\n", "\r" };
-        static readonly string[] SEP_COL = new string[] { "\t" };
-        static readonly string[] SEP_GROUP = new string[] { ":" };
+        Process _process;
         
         
         public ExifToolOptions Options { get; private set; }
@@ -36,80 +34,36 @@ namespace NExifTool
                 throw new FileNotFoundException("Please make sure the image exists.", srcPath);
             }
             
-            var output = await RunProcessAsync(srcPath);
-             
-            return ParseOutput(output);
-        }
-        
-        
-        IEnumerable<Tag> ParseOutput(string output)
-        {
-            var lines = output.Split(SEP_ROW, StringSplitOptions.RemoveEmptyEntries);
+            var result = await RunProcessAsync(srcPath);
+            var tags = Options.Parser.ParseTags(result.Output);
             
-            foreach(var line in lines)
-            {
-                var cols = line.Split(SEP_COL, StringSplitOptions.RemoveEmptyEntries);
-                var tag = new Tag();
-                
-                var groups = cols[0].Split(SEP_GROUP, StringSplitOptions.RemoveEmptyEntries);
-                
-                for(int i = 0; i < groups.Length; i++)
-                {
-                    switch(i)
-                    {
-                        case 0:
-                            tag.GeneralGroup = groups[i];
-                            break;
-                        case 1:
-                            tag.SpecificGroup = groups[i];
-                            break;
-                        case 2:
-                            tag.CategoryGroup = groups[i];
-                            break;
-                        case 3:
-                            tag.DocumentNumberGroup = groups[i];
-                            break;
-                        case 4:
-                            tag.InstanceNumberGroup = groups[i];
-                            break;
-                    }
-                }
-                
-                if(ExifToolLookup.Details.ContainsKey(cols[1]))
-                {
-                    tag.TagInfo = ExifToolLookup.Details[cols[1]];
-                }
-                
-                if(cols.Length > 2)
-                {
-                    tag.Value = cols[2];
-                }
-                
-                yield return tag;
-            }
+            _process.Dispose();
+            
+            return tags;
         }
         
         
-        // TODO: what if we want to specify a timeout?
         // http://stackoverflow.com/questions/10788982/is-there-any-async-equivalent-of-process-start
-        Task<string> RunProcessAsync(string fileName)
+        Task<ExifToolResult> RunProcessAsync(string fileName)
         {
-            var tcs = new TaskCompletionSource<string>();
+            var tcs = new TaskCompletionSource<ExifToolResult>();
             
-            var process = new Process
+            _process = new Process
             {
                 StartInfo = Options.GetStartInfo(fileName),
                 EnableRaisingEvents = true
             };
 
-            process.Exited += (sender, args) =>
+            _process.Exited += (sender, args) =>
             {
-                var output = process.StandardOutput.ReadToEnd();
-                tcs.SetResult(output);
-                process.Dispose();
+                var result = new ExifToolResult {
+                    Output = _process.StandardOutput
+                };
+                
+                tcs.SetResult(result);
             };
 
-            process.Start();
+            _process.Start();
 
             return tcs.Task;
         }
