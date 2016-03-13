@@ -43,6 +43,16 @@ namespace NExifTool.Tests
         }
         
         
+        [Fact]
+        public async void TestFilenameWithSpace()
+        {
+            var et = new ExifTool(new ExifToolOptions());
+            var res = (await et.GetTagsAsync("space test.NEF")).ToList();
+            
+            Assert.True(res.Count() > 0);
+        }
+        
+        
         [Fact(Skip = "used primarily to support some dev work")]
         public void DumpDistinctTypes()
         {

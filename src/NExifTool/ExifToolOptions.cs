@@ -40,11 +40,17 @@ namespace NExifTool
             // 1. odd, man page does not list the 5 for groups
             // 2. ALL and ALL# will pull both text and number values
             args.Append("-s -ALL -ALL# -G:0:1:2:3:4:5 -t ");
-            args.Append(rawFile);
+            args.Append(EscapeFilename(rawFile));
             
             psi.Arguments = args.ToString();
             
             return psi;
+        }
+        
+        
+        string EscapeFilename(string file)
+        {
+            return $"\"{file}\"";
         }
     }
 }
