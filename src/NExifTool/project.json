@@ -6,7 +6,7 @@
     "summary": ".Net wrapper for the excellent ExifTool",
     "description": ".Net wrapper for the excellent ExifTool",
     "tags": [ "exif", "exiftool", "photography" ],
-    "version": "0.2.0",
+    "version": "0.2.1",
     "dependencies": {
 
     },
