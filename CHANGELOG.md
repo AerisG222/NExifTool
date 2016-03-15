@@ -1,3 +1,7 @@
+#0.3.0 (03/14/2016)
+- try to improve the parser by looking for types more specifically, based on the group they belong to  
+- fallback for number types to see if we can parse a double where we might otherwise expect whole numbers
+
 #0.2.1 (03/13/2016)
 - wrap filename in quotes to allow spaces in file paths
 
