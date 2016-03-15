@@ -1,3 +1,6 @@
+#0.3.2 (03/15/2016)
+- adding another exif alias
+
 #0.3.1 (03/14/2016)
 - add an alias for some of the exif groups to try and improve hit rate
 
