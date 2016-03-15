@@ -11,7 +11,7 @@ namespace NExifTool
         public string DocumentNumberGroup { get; set; }
         public string InstanceNumberGroup { get; set; }
         
-        
+         
         public bool IsGps
         {
             get
@@ -26,6 +26,24 @@ namespace NExifTool
             get
             {
                 return !string.IsNullOrEmpty(SpecificGroup) && SpecificGroup.StartsWith("Nikon", StringComparison.OrdinalIgnoreCase); 
+            }
+        }
+        
+        
+        public bool IsExif
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(GeneralGroup) && GeneralGroup.Equals("EXIF", StringComparison.OrdinalIgnoreCase);
+            }
+        }
+        
+        
+        internal string LookupPrefix
+        {
+            get
+            {
+                return $"{GeneralGroup}:{SpecificGroup}:{CategoryGroup}::".ToLower();
             }
         }
     }

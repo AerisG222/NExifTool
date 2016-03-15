@@ -128,11 +128,13 @@ namespace NExifTool.Parser
         }
         
         
-        TagInfo GetTagInfo(string tagName)
+        TagInfo GetTagInfo(TagGroup group, string tagName)
         {
-            if(ExifToolLookup.Details.ContainsKey(tagName))
+            var key = $"{group.LookupPrefix}{tagName.ToLower()}";
+            
+            if(ExifToolLookup.Details.ContainsKey(key))
             {
-                return ExifToolLookup.Details[tagName];
+                return ExifToolLookup.Details[key];
             }
             else
             {
@@ -143,8 +145,8 @@ namespace NExifTool.Parser
         
         Tag BuildTag(ParseInfo pi)
         {
-            var ti = GetTagInfo(pi.TagName);
             var tg = GetTagGroup(pi.GroupInfo);
+            var ti = GetTagInfo(tg, pi.TagName);
             var tag = CreateSpecificTag(ti, tg, pi.NumberValue);
             
             tag.TagInfo = ti;
@@ -255,134 +257,137 @@ namespace NExifTool.Parser
                     }
                 }
                 
-                switch(info.Name.ToLower())
+                if(group.IsExif)
                 {
-                    case "interopindex":
-                        return new Tag<InteropIndex> { TypedValue = InteropIndex.FromKey(numberValue) };
-                    case "subfiletype":
-                        return new Tag<SubfileType> { TypedValue = SubfileType.FromKey(uint.Parse(numberValue)) };
-                    case "oldsubfiletype":
-                        return new Tag<OldSubfileType> { TypedValue = OldSubfileType.FromKey(ushort.Parse(numberValue)) };
-                    case "compression":
-                        return new Tag<Compression> { TypedValue = Compression.FromKey(ushort.Parse(numberValue)) };
-                    case "photometricinterpretation":
-                        return new Tag<PhotometricInterpretation> { TypedValue = PhotometricInterpretation.FromKey(ushort.Parse(numberValue)) };
-                    case "thresholding":
-                        return new Tag<Thresholding> { TypedValue = Thresholding.FromKey(ushort.Parse(numberValue)) };
-                    case "fillorder":
-                        return new Tag<FillOrder> { TypedValue = FillOrder.FromKey(ushort.Parse(numberValue)) };
-                    case "orientation":
-                        return new Tag<Orientation> { TypedValue = Orientation.FromKey(ushort.Parse(numberValue)) };
-                    case "planarconfiguration":
-                        return new Tag<PlanarConfiguration> { TypedValue = PlanarConfiguration.FromKey(ushort.Parse(numberValue)) };
-                    case "grayresponseunit":
-                        return new Tag<GrayResponseUnit> { TypedValue = GrayResponseUnit.FromKey(ushort.Parse(numberValue)) };
-                    case "resolutionunit":
-                        return new Tag<ResolutionUnit> { TypedValue = ResolutionUnit.FromKey(ushort.Parse(numberValue)) };
-                    case "predictor":
-                        return new Tag<Predictor> { TypedValue = Predictor.FromKey(ushort.Parse(numberValue)) };
-                    case "cleanfaxdata":
-                        return new Tag<CleanFaxData> { TypedValue = CleanFaxData.FromKey(ushort.Parse(numberValue)) };
-                    case "inkset":
-                        return new Tag<InkSet> { TypedValue = InkSet.FromKey(ushort.Parse(numberValue)) };
-                    case "extrasamples":
-                        return new Tag<ExtraSamples> { TypedValue = ExtraSamples.FromKey(ushort.Parse(numberValue)) };
-                    case "sampleformat":
-                        return new Tag<SampleFormat> { TypedValue = SampleFormat.FromKey(ushort.Parse(numberValue)) };
-                    case "indexed":
-                        return new Tag<Indexed> { TypedValue = Indexed.FromKey(ushort.Parse(numberValue)) };
-                    case "opiproxy":
-                        return new Tag<OpiProxy> { TypedValue = OpiProxy.FromKey(ushort.Parse(numberValue)) };
-                    case "profiletype":    
-                        return new Tag<ProfileType> { TypedValue = ProfileType.FromKey(ushort.Parse(numberValue)) };
-                    case "faxprofile":
-                        return new Tag<FaxProfile> { TypedValue = FaxProfile.FromKey(ushort.Parse(numberValue)) };
-                    case "jpegproc":
-                        return new Tag<JpegProc> { TypedValue = JpegProc.FromKey(ushort.Parse(numberValue)) };
-                    case "ycbcrsubsampling":
-                        return new Tag<YCbCrSubSampling> { TypedValue = YCbCrSubSampling.FromKey(numberValue) };
-                    case "ycbcrpositioning":
-                        return new Tag<YCbCrPositioning> { TypedValue = YCbCrPositioning.FromKey(ushort.Parse(numberValue)) };
-                    case "sonyrawfiletype":
-                        return new Tag<SonyRawFileType> { TypedValue = SonyRawFileType.FromKey(ushort.Parse(numberValue)) };
-                    case "rasterpadding":
-                        return new Tag<RasterPadding> { TypedValue = RasterPadding.FromKey(ushort.Parse(numberValue)) };
-                    case "imagecolorindicator":
-                        return new Tag<ImageColorIndicator> { TypedValue = ImageColorIndicator.FromKey(ushort.Parse(numberValue)) };
-                    case "backgroundcolorindicator":
-                        return new Tag<BackgroundColorIndicator> { TypedValue = BackgroundColorIndicator.FromKey(ushort.Parse(numberValue)) };
-                    case "hcusage":
-                        return new Tag<HCUsage> { TypedValue = HCUsage.FromKey(ushort.Parse(numberValue)) };
-                    case "exposureprogram":
-                        return new Tag<ExposureProgram> { TypedValue = ExposureProgram.FromKey(ushort.Parse(numberValue)) };
-                    case "sensitivitytype":
-                        return new Tag<SensitivityType> { TypedValue = SensitivityType.FromKey(ushort.Parse(numberValue)) };
-                    case "componentsconfiguration":
-                        return new Tag<ComponentsConfiguration> { TypedValue = ComponentsConfiguration.FromKey(ushort.Parse(numberValue)) };
-                    case "meteringmode":
-                        return new Tag<MeteringMode> { TypedValue = MeteringMode.FromKey(ushort.Parse(numberValue)) };
-                    case "lightsource":
-                    case "calibrationilluminant1":
-                    case "calibrationilluminant2":
-                        return new Tag<LightSource> { TypedValue = LightSource.FromKey(ushort.Parse(numberValue)) };
-                    case "flash":
-                        return new Tag<FlashValue> { TypedValue = FlashValue.FromKey(ushort.Parse(numberValue)) };
-                    case "focalplaneresolutionunit":
-                        return new Tag<FocalPlaneResolutionUnit> { TypedValue = FocalPlaneResolutionUnit.FromKey(ushort.Parse(numberValue)) };
-                    case "securityclassification":
-                        return new Tag<SecurityClassification> { TypedValue = SecurityClassification.FromKey(numberValue) };
-                    case "sensingmethod":
-                        return new Tag<SensingMethod> { TypedValue = SensingMethod.FromKey(ushort.Parse(numberValue)) };
-                    case "colorspace":
-                        return new Tag<ColorSpace> { TypedValue = ColorSpace.FromKey(ushort.Parse(numberValue)) };
-                    case "filesource":
-                        return new Tag<FileSource> { TypedValue = FileSource.FromKey(ushort.Parse(numberValue)) };
-                    case "scenetype":
-                        return new Tag<SceneType> { TypedValue = SceneType.FromKey(ushort.Parse(numberValue)) };
-                    case "customrendered":
-                        return new Tag<CustomRendered> { TypedValue = CustomRendered.FromKey(ushort.Parse(numberValue)) };
-                    case "exposuremode":
-                        return new Tag<ExposureMode> { TypedValue = ExposureMode.FromKey(ushort.Parse(numberValue)) };
-                    case "whitebalance":
-                        return new Tag<WhiteBalance> { TypedValue = WhiteBalance.FromKey(ushort.Parse(numberValue)) };
-                    case "scenecapturetype":
-                        return new Tag<SceneCaptureType> { TypedValue = SceneCaptureType.FromKey(ushort.Parse(numberValue)) };
-                    case "gaincontrol":
-                        return new Tag<GainControl> { TypedValue = GainControl.FromKey(ushort.Parse(numberValue)) };
-                    case "contrast":
-                        return new Tag<Contrast> { TypedValue = Contrast.FromKey(ushort.Parse(numberValue)) };    
-                    case "saturation":
-                        return new Tag<Saturation> { TypedValue = Saturation.FromKey(ushort.Parse(numberValue)) };
-                    case "sharpness":
-                        return new Tag<Sharpness> { TypedValue = Sharpness.FromKey(ushort.Parse(numberValue)) };
-                    case "subjectdistancerange":
-                        return new Tag<SubjectDistanceRange> { TypedValue = SubjectDistanceRange.FromKey(ushort.Parse(numberValue)) };
-                    case "pixelformat":
-                        return new Tag<PixelFormat> { TypedValue = PixelFormat.FromKey(ushort.Parse(numberValue)) };
-                    case "transformation":
-                        return new Tag<Transformation> { TypedValue = Transformation.FromKey(ushort.Parse(numberValue)) };
-                    case "uncompressed":
-                        return new Tag<Uncompressed> { TypedValue = Uncompressed.FromKey(ushort.Parse(numberValue)) };
-                    case "imagedatadiscard":
-                        return new Tag<ImageDataDiscard> { TypedValue = ImageDataDiscard.FromKey(ushort.Parse(numberValue)) };
-                    case "alphadatadiscard":
-                        return new Tag<AlphaDataDiscard> { TypedValue = AlphaDataDiscard.FromKey(ushort.Parse(numberValue)) };
-                    case "usptooriginalcontenttype":
-                        return new Tag<USPTOOriginalContentType> { TypedValue = USPTOOriginalContentType.FromKey(ushort.Parse(numberValue)) };
-                    case "cfalayout":
-                        return new Tag<CFALayout> { TypedValue = CFALayout.FromKey(ushort.Parse(numberValue)) };
-                    case "makernotesafety":
-                        return new Tag<MakerNoteSafety> { TypedValue = MakerNoteSafety.FromKey(ushort.Parse(numberValue)) };
-                    case "profileembedpolicy":
-                        return new Tag<ProfileEmbedPolicy> { TypedValue = ProfileEmbedPolicy.FromKey(ushort.Parse(numberValue)) };
-                    case "previewcolorspace":
-                        return new Tag<PreviewColorSpace> { TypedValue = PreviewColorSpace.FromKey(ushort.Parse(numberValue)) };
-                    case "profilehuesatmapencoding":
-                        return new Tag<ProfileHueSatMapEncoding> { TypedValue = ProfileHueSatMapEncoding.FromKey(ushort.Parse(numberValue)) };
-                    case "profilelooktableencoding":
-                        return new Tag<ProfileLookTableEncoding> { TypedValue = ProfileLookTableEncoding.FromKey(ushort.Parse(numberValue)) };
-                    case "defaultblackrender":
-                        return new Tag<DefaultBlackRender> { TypedValue = DefaultBlackRender.FromKey(ushort.Parse(numberValue)) };
+                    switch(info.Name.ToLower())
+                    {
+                        case "interopindex":
+                            return new Tag<InteropIndex> { TypedValue = InteropIndex.FromKey(numberValue) };
+                        case "subfiletype":
+                            return new Tag<SubfileType> { TypedValue = SubfileType.FromKey(uint.Parse(numberValue)) };
+                        case "oldsubfiletype":
+                            return new Tag<OldSubfileType> { TypedValue = OldSubfileType.FromKey(ushort.Parse(numberValue)) };
+                        case "compression":
+                            return new Tag<Compression> { TypedValue = Compression.FromKey(ushort.Parse(numberValue)) };
+                        case "photometricinterpretation":
+                            return new Tag<PhotometricInterpretation> { TypedValue = PhotometricInterpretation.FromKey(ushort.Parse(numberValue)) };
+                        case "thresholding":
+                            return new Tag<Thresholding> { TypedValue = Thresholding.FromKey(ushort.Parse(numberValue)) };
+                        case "fillorder":
+                            return new Tag<FillOrder> { TypedValue = FillOrder.FromKey(ushort.Parse(numberValue)) };
+                        case "orientation":
+                            return new Tag<Orientation> { TypedValue = Orientation.FromKey(ushort.Parse(numberValue)) };
+                        case "planarconfiguration":
+                            return new Tag<PlanarConfiguration> { TypedValue = PlanarConfiguration.FromKey(ushort.Parse(numberValue)) };
+                        case "grayresponseunit":
+                            return new Tag<GrayResponseUnit> { TypedValue = GrayResponseUnit.FromKey(ushort.Parse(numberValue)) };
+                        case "resolutionunit":
+                            return new Tag<ResolutionUnit> { TypedValue = ResolutionUnit.FromKey(ushort.Parse(numberValue)) };
+                        case "predictor":
+                            return new Tag<Predictor> { TypedValue = Predictor.FromKey(ushort.Parse(numberValue)) };
+                        case "cleanfaxdata":
+                            return new Tag<CleanFaxData> { TypedValue = CleanFaxData.FromKey(ushort.Parse(numberValue)) };
+                        case "inkset":
+                            return new Tag<InkSet> { TypedValue = InkSet.FromKey(ushort.Parse(numberValue)) };
+                        case "extrasamples":
+                            return new Tag<ExtraSamples> { TypedValue = ExtraSamples.FromKey(ushort.Parse(numberValue)) };
+                        case "sampleformat":
+                            return new Tag<SampleFormat> { TypedValue = SampleFormat.FromKey(ushort.Parse(numberValue)) };
+                        case "indexed":
+                            return new Tag<Indexed> { TypedValue = Indexed.FromKey(ushort.Parse(numberValue)) };
+                        case "opiproxy":
+                            return new Tag<OpiProxy> { TypedValue = OpiProxy.FromKey(ushort.Parse(numberValue)) };
+                        case "profiletype":    
+                            return new Tag<ProfileType> { TypedValue = ProfileType.FromKey(ushort.Parse(numberValue)) };
+                        case "faxprofile":
+                            return new Tag<FaxProfile> { TypedValue = FaxProfile.FromKey(ushort.Parse(numberValue)) };
+                        case "jpegproc":
+                            return new Tag<JpegProc> { TypedValue = JpegProc.FromKey(ushort.Parse(numberValue)) };
+                        case "ycbcrsubsampling":
+                            return new Tag<YCbCrSubSampling> { TypedValue = YCbCrSubSampling.FromKey(numberValue) };
+                        case "ycbcrpositioning":
+                            return new Tag<YCbCrPositioning> { TypedValue = YCbCrPositioning.FromKey(ushort.Parse(numberValue)) };
+                        case "sonyrawfiletype":
+                            return new Tag<SonyRawFileType> { TypedValue = SonyRawFileType.FromKey(ushort.Parse(numberValue)) };
+                        case "rasterpadding":
+                            return new Tag<RasterPadding> { TypedValue = RasterPadding.FromKey(ushort.Parse(numberValue)) };
+                        case "imagecolorindicator":
+                            return new Tag<ImageColorIndicator> { TypedValue = ImageColorIndicator.FromKey(ushort.Parse(numberValue)) };
+                        case "backgroundcolorindicator":
+                            return new Tag<BackgroundColorIndicator> { TypedValue = BackgroundColorIndicator.FromKey(ushort.Parse(numberValue)) };
+                        case "hcusage":
+                            return new Tag<HCUsage> { TypedValue = HCUsage.FromKey(ushort.Parse(numberValue)) };
+                        case "exposureprogram":
+                            return new Tag<ExposureProgram> { TypedValue = ExposureProgram.FromKey(ushort.Parse(numberValue)) };
+                        case "sensitivitytype":
+                            return new Tag<SensitivityType> { TypedValue = SensitivityType.FromKey(ushort.Parse(numberValue)) };
+                        case "componentsconfiguration":
+                            return new Tag<ComponentsConfiguration> { TypedValue = ComponentsConfiguration.FromKey(ushort.Parse(numberValue)) };
+                        case "meteringmode":
+                            return new Tag<MeteringMode> { TypedValue = MeteringMode.FromKey(ushort.Parse(numberValue)) };
+                        case "lightsource":
+                        case "calibrationilluminant1":
+                        case "calibrationilluminant2":
+                            return new Tag<LightSource> { TypedValue = LightSource.FromKey(ushort.Parse(numberValue)) };
+                        case "flash":
+                            return new Tag<FlashValue> { TypedValue = FlashValue.FromKey(ushort.Parse(numberValue)) };
+                        case "focalplaneresolutionunit":
+                            return new Tag<FocalPlaneResolutionUnit> { TypedValue = FocalPlaneResolutionUnit.FromKey(ushort.Parse(numberValue)) };
+                        case "securityclassification":
+                            return new Tag<SecurityClassification> { TypedValue = SecurityClassification.FromKey(numberValue) };
+                        case "sensingmethod":
+                            return new Tag<SensingMethod> { TypedValue = SensingMethod.FromKey(ushort.Parse(numberValue)) };
+                        case "colorspace":
+                            return new Tag<ColorSpace> { TypedValue = ColorSpace.FromKey(ushort.Parse(numberValue)) };
+                        case "filesource":
+                            return new Tag<FileSource> { TypedValue = FileSource.FromKey(ushort.Parse(numberValue)) };
+                        case "scenetype":
+                            return new Tag<SceneType> { TypedValue = SceneType.FromKey(ushort.Parse(numberValue)) };
+                        case "customrendered":
+                            return new Tag<CustomRendered> { TypedValue = CustomRendered.FromKey(ushort.Parse(numberValue)) };
+                        case "exposuremode":
+                            return new Tag<ExposureMode> { TypedValue = ExposureMode.FromKey(ushort.Parse(numberValue)) };
+                        case "whitebalance":
+                            return new Tag<WhiteBalance> { TypedValue = WhiteBalance.FromKey(ushort.Parse(numberValue)) };
+                        case "scenecapturetype":
+                            return new Tag<SceneCaptureType> { TypedValue = SceneCaptureType.FromKey(ushort.Parse(numberValue)) };
+                        case "gaincontrol":
+                            return new Tag<GainControl> { TypedValue = GainControl.FromKey(ushort.Parse(numberValue)) };
+                        case "contrast":
+                            return new Tag<Contrast> { TypedValue = Contrast.FromKey(ushort.Parse(numberValue)) };    
+                        case "saturation":
+                            return new Tag<Saturation> { TypedValue = Saturation.FromKey(ushort.Parse(numberValue)) };
+                        case "sharpness":
+                            return new Tag<Sharpness> { TypedValue = Sharpness.FromKey(ushort.Parse(numberValue)) };
+                        case "subjectdistancerange":
+                            return new Tag<SubjectDistanceRange> { TypedValue = SubjectDistanceRange.FromKey(ushort.Parse(numberValue)) };
+                        case "pixelformat":
+                            return new Tag<PixelFormat> { TypedValue = PixelFormat.FromKey(ushort.Parse(numberValue)) };
+                        case "transformation":
+                            return new Tag<Transformation> { TypedValue = Transformation.FromKey(ushort.Parse(numberValue)) };
+                        case "uncompressed":
+                            return new Tag<Uncompressed> { TypedValue = Uncompressed.FromKey(ushort.Parse(numberValue)) };
+                        case "imagedatadiscard":
+                            return new Tag<ImageDataDiscard> { TypedValue = ImageDataDiscard.FromKey(ushort.Parse(numberValue)) };
+                        case "alphadatadiscard":
+                            return new Tag<AlphaDataDiscard> { TypedValue = AlphaDataDiscard.FromKey(ushort.Parse(numberValue)) };
+                        case "usptooriginalcontenttype":
+                            return new Tag<USPTOOriginalContentType> { TypedValue = USPTOOriginalContentType.FromKey(ushort.Parse(numberValue)) };
+                        case "cfalayout":
+                            return new Tag<CFALayout> { TypedValue = CFALayout.FromKey(ushort.Parse(numberValue)) };
+                        case "makernotesafety":
+                            return new Tag<MakerNoteSafety> { TypedValue = MakerNoteSafety.FromKey(ushort.Parse(numberValue)) };
+                        case "profileembedpolicy":
+                            return new Tag<ProfileEmbedPolicy> { TypedValue = ProfileEmbedPolicy.FromKey(ushort.Parse(numberValue)) };
+                        case "previewcolorspace":
+                            return new Tag<PreviewColorSpace> { TypedValue = PreviewColorSpace.FromKey(ushort.Parse(numberValue)) };
+                        case "profilehuesatmapencoding":
+                            return new Tag<ProfileHueSatMapEncoding> { TypedValue = ProfileHueSatMapEncoding.FromKey(ushort.Parse(numberValue)) };
+                        case "profilelooktableencoding":
+                            return new Tag<ProfileLookTableEncoding> { TypedValue = ProfileLookTableEncoding.FromKey(ushort.Parse(numberValue)) };
+                        case "defaultblackrender":
+                            return new Tag<DefaultBlackRender> { TypedValue = DefaultBlackRender.FromKey(ushort.Parse(numberValue)) };
+                    }
                 }
                 
                 // ---- VALUE TAG ----
@@ -426,8 +431,16 @@ namespace NExifTool.Parser
             }
             catch
             {
-                // if we run into any conversion problems, note this, but return a basic tag instead
-                Console.WriteLine($"error converting value for tag {info.Name} and type {info.ValueType} in specific group {group.SpecificGroup}");
+                // there are some entries that are listed as whole numbers, but are actually fractions.  lets try to parse those here as a fallback
+                try
+                {
+                    return new Tag<double> { TypedValue = double.Parse(numberValue) };
+                }
+                catch
+                {
+                    // we tried our best, just print a note for now about the error
+                    Console.WriteLine($"error converting {group.SpecificGroup}::{info.Name}.  Expected type: {info.ValueType} but got value: {numberValue}");
+                }
             }
             
             return new Tag();
