@@ -65,6 +65,12 @@
                     <xsl:value-of select="desc[@lang='en']" /><xsl:text>", "</xsl:text>
                     <xsl:value-of select="@type" /><xsl:text>");&#xa;</xsl:text>
             </xsl:if>
+            <xsl:if test="$g0 = 'exif' and $g1 = 'ifd0'">
+                <xsl:text>            AddInfo("</xsl:text>
+                    <xsl:value-of select="$g0" />:exififd:<xsl:value-of select="$g2" />::<xsl:value-of select="$name" /><xsl:text>", "</xsl:text>
+                    <xsl:value-of select="desc[@lang='en']" /><xsl:text>", "</xsl:text>
+                    <xsl:value-of select="@type" /><xsl:text>");&#xa;</xsl:text>
+            </xsl:if>
         </xsl:for-each>
     </xsl:template>
 </xsl:stylesheet>
