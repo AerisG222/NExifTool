@@ -1,3 +1,6 @@
+#0.3.4 (03/16/2016)
+- fix dumb error in my last fix... let's see how many more of these will come ;)
+
 #0.3.3 (03/16/2016)
 - fix what I broke (constructor to complex)
 
