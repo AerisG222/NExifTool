@@ -1,3 +1,6 @@
+#0.3.3 (03/16/2016)
+- fix what I broke (constructor to complex)
+
 #0.3.2 (03/15/2016)
 - adding another exif alias
 
