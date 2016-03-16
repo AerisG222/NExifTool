@@ -1,0 +1,22 @@
+{
+    "title": "xslt",
+    "authors": [ "Mike Morano <mmorano@mikeandwan.us>" ],
+    "summary": "dumb tool to facilitate xslt 2.0 transforms for NExifTool",
+    "compilationOptions": {
+        "emitEntryPoint": true
+    },
+    "commands": {
+        "xslt": "Program" 
+    },
+    "dependencies": {
+        
+    },
+    "frameworks": {
+        "dnx451": { 
+            "frameworkAssemblies": {
+                "System.Xml": "",
+                "System.Xml.Linq": ""
+            }
+        }
+    }
+}

@@ -1,2 +1,2 @@
 #!/bin/bash
-xsltproc genlookup.xslt exiftool.xml | tail -n +1 > ../src/NExifTool/ExifToolLookup.cs
+dnx -p xslt/project.json run ./exiftool.xml > ../src/NExifTool/ExifToolLookup.cs
