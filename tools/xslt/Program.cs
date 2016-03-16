@@ -111,7 +111,7 @@ namespace NExifTool.Tools
         
         static void WriteTag(string g0, string g1, string g2, string name, string desc, string type)
         {
-            WriteLine($"            AddInfo(\"{g0}:{g1}:{g2}::name\", \"{desc}\", \"{type}\");");
+            WriteLine($"            AddInfo(\"{g0}:{g1}:{g2}::{name}\", \"{desc}\", \"{type}\");");
         }
         
         
