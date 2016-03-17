@@ -1,3 +1,6 @@
+#0.4.1 (03/17/2016)
+- retain the raw numbervalue for a tag so it may be used as a fallback
+
 #0.4.0 (03/17/2016)
 - improve the generator and parser to provide more accurate results
 
