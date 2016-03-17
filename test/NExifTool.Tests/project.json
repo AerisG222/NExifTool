@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "NExifTool": "0.2.0",
+        "NExifTool": "",
         "xunit": "2.1.0-*",
         "xunit.runner.dnx": "2.1.0-*"
     },

@@ -37,9 +37,8 @@ namespace NExifTool
             
             StringBuilder args = new StringBuilder();
             
-            // 1. odd, man page does not list the 5 for groups
-            // 2. ALL and ALL# will pull both text and number values
-            args.Append("-s -ALL -ALL# -G:0:1:2:3:4:5 -t ");
+            // xml seems to be the only one to dump table names and tag ids needed for lookup
+            args.Append("-X -t -ALL -ALL# ");
             args.Append(EscapeFilename(rawFile));
             
             psi.Arguments = args.ToString();

@@ -5,8 +5,8 @@ namespace NExifTool.Parser
 {
     class ParseInfo
     {
-        public string GroupInfo { get; set; }
-        public string TagName { get; set; }
+        public string TableName { get; set; }
+        public string TagId { get; set; }
         public string Value { get; set; }
         public string NumberValue { get; set; }
     }

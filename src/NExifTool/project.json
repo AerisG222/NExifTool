@@ -11,6 +11,11 @@
 
     },
     "frameworks": {
-        "net451": { }
+        "net451": { 
+            "frameworkAssemblies": {
+                "System.Xml": "",
+                "System.Xml.Linq": ""
+            }
+        }
     }
 }

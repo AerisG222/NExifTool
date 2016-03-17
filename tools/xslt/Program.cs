@@ -46,19 +46,25 @@ namespace NExifTool.Tools
             WriteInitCalls();
             
             WriteLine("        }");
+            
             WriteLine();
             WriteLine();
-            WriteLine("        static void AddInfo(string name, string description, string type)");
+            WriteLine("        static void AddInfo(TagInfo info)");
             WriteLine("        {");
-            WriteLine("            if(!Details.ContainsKey(name))");
+            WriteLine("            if(!Details.ContainsKey(info.LookupKey))");
             WriteLine("            {");
-            WriteLine("                Details.Add(name, new TagInfo { Name = name, Description = description, ValueType = type });");
+            WriteLine("                Details.Add(info.LookupKey, info);");
             WriteLine("            }");
-            WriteLine("            //else");
-            WriteLine("            //{");
-            WriteLine("                //Console.WriteLine($\"duplicate: {name}\");");
-            WriteLine("            //}");
+            
+            /* useful for debugging the generator
+            WriteLine("            else");
+            WriteLine("            {");
+            WriteLine("                Console.WriteLine($\"duplicated lookup entry: {info.LookupKey}\");");
+            WriteLine("            }");
+            */
+            
             WriteLine("        }");
+
             WriteLine("    }");
             WriteLine("}");
             WriteLine();
@@ -88,33 +94,33 @@ namespace NExifTool.Tools
         
         static void WriteTags(XElement table)
         {
-            var g0 = table.Attribute("g0")?.Value.ToLower();
-            var g1 = table.Attribute("g1")?.Value.ToLower();
-            var g2 = table.Attribute("g2")?.Value.ToLower();
+            var tableName = table.Attribute("name").Value;
+            var tableG0 = table.Attribute("g0")?.Value;
+            var tableG1 = table.Attribute("g1")?.Value;
+            var tableG2 = table.Attribute("g2")?.Value;
             
-            foreach(var tag in table.Descendants("tag"))
+            // for indexed items, only use the first one
+            foreach(var tag in table.Descendants("tag").Where(x => x.Attribute("index") == null || string.Equals("0", x.Attribute("index").Value)))
             {
-                var name = tag.Attribute("name").Value.ToLower();
-                var type = tag.Attribute("type").Value.ToLower();
+                var tagId = tag.Attribute("id").Value;
+                var tagName = tag.Attribute("name").Value;
+                var type = tag.Attribute("type").Value;
                 var desc = tag.Descendants("desc").First(x => (string) x.Attribute("lang") == "en")?.Value;
-                
-                WriteTag(g0, g1, g2, name, desc, type);
-                
-                if(string.Equals(g0, "exif", StringComparison.Ordinal) && string.Equals(g1, "ifd0", StringComparison.Ordinal))
-                {
-                    WriteTag(g0, "subifd1", g2, name, desc, type);
-                    WriteTag(g0, "exififd", g2, name, desc, type);
-                }
+                var g0 = table.Attribute("g0")?.Value ?? tableG0;
+                var g1 = table.Attribute("g1")?.Value ?? tableG1;
+                var g2 = table.Attribute("g2")?.Value ?? tableG2;
+            
+                WriteTag(tableName, tagId, tagName, desc, g0, g1, g2, type);
             }
         }
         
         
-        static void WriteTag(string g0, string g1, string g2, string name, string desc, string type)
+        static void WriteTag(string tableName, string tagId, string tagName, string desc, string g0, string g1, string g2, string type)
         {
-            WriteLine($"            AddInfo(\"{g0}:{g1}:{g2}::{name}\", \"{desc}\", \"{type}\");");
+            WriteLine($"            AddInfo(new TagInfo {{ Id = \"{tagId}\", Name = \"{tagName}\", Description = \"{desc}\", TableName = \"{tableName}\", GeneralGroup = \"{g0}\", SpecificGroup = \"{g1}\", CategoryGroup = \"{g2}\", ValueType = \"{type}\" }});");
         }
         
-        
+                
         static void WriteInitCalls()
         {
             for(int i = 1; i < _count; i++)

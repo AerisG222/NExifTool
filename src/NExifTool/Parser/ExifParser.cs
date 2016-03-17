@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Linq;
 using NExifTool;
 using NExifTool.Enums;
 using NExifTool.Enums.Gps;
@@ -13,13 +14,6 @@ namespace NExifTool.Parser
         : IExifParser
     {
         const string EXIF_TOOL_TAG_NAME = "ExifToolVersion";
-        const int IDX_GROUPS = 0;
-        const int IDX_NAME = 1;
-        const int IDX_VALUE = 2;
-        static readonly string[] SEP_COL = new string[] { "\t" };
-        static readonly  string[] SEP_GROUP = new string[] { ":" };
-        
-        
         byte _exifToolTagCounter = 0;
         
         
@@ -47,47 +41,44 @@ namespace NExifTool.Parser
                 
         IEnumerable<ParseInfo> GetParseInfo(StreamReader reader)
         {
+            var doc = XDocument.Load(reader);
+            XNamespace nsRdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+            XNamespace nsEt = "http://ns.exiftool.ca/1.0/";
             var tags = new Dictionary<string, ParseInfo>();
+            var els = doc.Element(nsRdf + "RDF").Element(nsRdf + "Description");
             
-            for(var line = reader.ReadLine(); !reader.EndOfStream; line = reader.ReadLine())
+            foreach(var el in els.Elements())
             {
-                if(string.IsNullOrEmpty(line))
-                {
-                    continue;
-                }
-                
-                var parts = line.Split(SEP_COL, StringSplitOptions.RemoveEmptyEntries);
-                
-                if(parts.Length != 3)
-                {
-                    continue;
-                }
-                
-                if(string.Equals(EXIF_TOOL_TAG_NAME, parts[1], StringComparison.OrdinalIgnoreCase))
+                if(string.Equals(el.Name.LocalName, EXIF_TOOL_TAG_NAME, StringComparison.OrdinalIgnoreCase))
                 {
                     _exifToolTagCounter++;
                 }
                 
+                var tableName = el.Attribute(nsEt + "table").Value;
+                var tagId = el.Attribute(nsEt + "id").Value;
+                var val = el.Value;
+                var key = TagInfo.GenerateLookupKey(tableName, tagId);
+                    
                 if(!IsNumericSection)
                 {
-                    tags[parts[IDX_NAME]] = new ParseInfo {
-                        GroupInfo = parts[IDX_GROUPS],
-                        TagName = parts[IDX_NAME],
-                        Value = parts[IDX_VALUE]
+                    tags[key] = new ParseInfo {
+                        TableName = tableName,
+                        TagId = tagId,
+                        Value = val
                     };
                 }
                 else
                 {
-                    if(tags.ContainsKey(parts[IDX_NAME]))
+                    if(tags.ContainsKey(key))
                     {
-                        tags[parts[IDX_NAME]].NumberValue = parts[IDX_VALUE];
+                        tags[key].NumberValue = val;
                     }
                     else
                     {
-                        tags[parts[IDX_NAME]] = new ParseInfo {
-                            GroupInfo = parts[IDX_GROUPS],
-                            TagName = parts[IDX_NAME],
-                            NumberValue = parts[IDX_VALUE]
+                        tags[key] = new ParseInfo {
+                            TableName = tableName,
+                            TagId = tagId,
+                            NumberValue = val
                         };
                     }
                 }
@@ -96,41 +87,10 @@ namespace NExifTool.Parser
             return tags.Values;
         }
         
-        
-        TagGroup GetTagGroup(string groups)
+                
+        TagInfo GetTagInfo(string tableName, string tagId)
         {
-            var tagGroup = new TagGroup();
-            var groupParts = groups.Split(SEP_GROUP, StringSplitOptions.RemoveEmptyEntries);
-            
-            for(int i = 0; i < groupParts.Length; i++)
-            {
-                switch(i)
-                {
-                    case 0:
-                        tagGroup.GeneralGroup = groupParts[i];
-                        break;
-                    case 1:
-                        tagGroup.SpecificGroup = groupParts[i];
-                        break;
-                    case 2:
-                        tagGroup.CategoryGroup = groupParts[i];
-                        break;
-                    case 3:
-                        tagGroup.DocumentNumberGroup = groupParts[i];
-                        break;
-                    case 4:
-                        tagGroup.InstanceNumberGroup = groupParts[i];
-                        break;
-                }
-            }
-            
-            return tagGroup;
-        }
-        
-        
-        TagInfo GetTagInfo(TagGroup group, string tagName)
-        {
-            var key = $"{group.LookupPrefix}{tagName.ToLower()}";
+            var key = TagInfo.GenerateLookupKey(tableName, tagId);
             
             if(ExifToolLookup.Details.ContainsKey(key))
             {
@@ -138,30 +98,28 @@ namespace NExifTool.Parser
             }
             else
             {
-                return new TagInfo { Name = tagName };
+                return new TagInfo { TableName = tableName, Id = tagId };
             }
         }
         
         
         Tag BuildTag(ParseInfo pi)
         {
-            var tg = GetTagGroup(pi.GroupInfo);
-            var ti = GetTagInfo(tg, pi.TagName);
-            var tag = CreateSpecificTag(ti, tg, pi.NumberValue);
+            var ti = GetTagInfo(pi.TableName, pi.TagId);
+            var tag = CreateSpecificTag(ti, pi.NumberValue);
             
             tag.TagInfo = ti;
-            tag.TagGroup = tg;
             tag.Value = pi.Value;
             
             return tag;
         }
         
         
-        Tag CreateSpecificTag(TagInfo info, TagGroup group, string numberValue)
+        Tag CreateSpecificTag(TagInfo info, string numberValue)
         {
             try
             {
-                if(group.IsGps)
+                if(info.IsGps)
                 {
                     switch(info.Name.ToLower())
                     {
@@ -194,7 +152,7 @@ namespace NExifTool.Parser
                     }
                 }
                 
-                if(group.IsNikon)
+                if(info.IsNikon)
                 {
                     switch(info.Name.ToLower())
                     {
@@ -257,7 +215,7 @@ namespace NExifTool.Parser
                     }
                 }
                 
-                if(group.IsExif)
+                if(info.IsExif)
                 {
                     switch(info.Name.ToLower())
                     {
@@ -432,15 +390,15 @@ namespace NExifTool.Parser
             catch
             {
                 // there are some entries that are listed as whole numbers, but are actually fractions.  lets try to parse those here as a fallback
-                try
-                {
-                    return new Tag<double> { TypedValue = double.Parse(numberValue) };
-                }
-                catch
-                {
+                //try
+                //{
+                //    return new Tag<double> { TypedValue = double.Parse(numberValue) };
+                //}
+                //catch
+                //{
                     // we tried our best, just print a note for now about the error
-                    Console.WriteLine($"error converting {group.SpecificGroup}::{info.Name}.  Expected type: {info.ValueType} but got value: {numberValue}");
-                }
+                    Console.WriteLine($"error converting {info.TableName}::{info.Id}.  Expected type: {info.ValueType} but got value: {numberValue}");
+                //}
             }
             
             return new Tag();
