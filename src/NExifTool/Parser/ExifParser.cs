@@ -110,6 +110,7 @@ namespace NExifTool.Parser
             
             tag.TagInfo = ti;
             tag.Value = pi.Value;
+            tag.NumberValue = pi.NumberValue;
             
             return tag;
         }

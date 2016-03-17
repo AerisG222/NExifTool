@@ -77,9 +77,14 @@ namespace NExifTool.Tests
             
             var bitsPerSample = GetExifData<ushort>(tags, "BitsPerSample")?.TypedValue;
             var digitalZoomRatio = GetExifData<double>(tags, "DigitalZoomRatio")?.TypedValue;
+            var expTime = GetExifData<double>(tags, "ExposureTime");
             
             Assert.True(bitsPerSample == 14, "bits per sample should be 14 for this photo");
             Assert.True(digitalZoomRatio == 1, "digital zoom ratio should be 1 for this photo");
+            
+            Assert.Equal("1/500", expTime.Value);
+            Assert.Equal("0.002", expTime.NumberValue);
+            Assert.Equal(.002, expTime.TypedValue);
         }
         
         

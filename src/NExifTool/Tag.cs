@@ -7,5 +7,6 @@ namespace NExifTool
     {
         public TagInfo TagInfo { get; set; }
         public string Value { get; set; }
+        public string NumberValue { get; set; }
     }
 }
