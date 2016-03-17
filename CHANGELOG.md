@@ -1,3 +1,6 @@
+#0.4.0 (03/17/2016)
+- improve the generator and parser to provide more accurate results
+
 #0.3.4 (03/16/2016)
 - fix dumb error in my last fix... let's see how many more of these will come ;)
 
