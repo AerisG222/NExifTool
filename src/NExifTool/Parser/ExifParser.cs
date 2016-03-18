@@ -17,6 +17,9 @@ namespace NExifTool.Parser
         byte _exifToolTagCounter = 0;
         
         
+        public bool Quiet { get; set; }
+        
+           
         bool IsNumericSection
         {
             get
@@ -390,16 +393,10 @@ namespace NExifTool.Parser
             }
             catch
             {
-                // there are some entries that are listed as whole numbers, but are actually fractions.  lets try to parse those here as a fallback
-                //try
-                //{
-                //    return new Tag<double> { TypedValue = double.Parse(numberValue) };
-                //}
-                //catch
-                //{
-                    // we tried our best, just print a note for now about the error
-                    Console.WriteLine($"error converting {info.TableName}::{info.Id}.  Expected type: {info.ValueType} but got value: {numberValue}");
-                //}
+                if(!Quiet)
+                {
+                    Console.WriteLine($"error converting {info.TableName}::{info.Id}.  Expected type: {info.ValueType} but got value: {numberValue}");    
+                }
             }
             
             return new Tag();

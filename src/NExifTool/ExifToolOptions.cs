@@ -9,9 +9,23 @@ namespace NExifTool
     public class ExifToolOptions
     {
         IExifParser _exifParser = new ExifParser();
+        bool _quiet;
         
         
         public string ExifToolPath { get; set; } = "exiftool";
+        
+        public bool Quiet 
+        { 
+            get
+            {
+                return _quiet;
+            } 
+            set
+            {
+                _quiet = value;
+                _exifParser.Quiet = value;
+            }
+        }
         
         
         public IExifParser Parser
@@ -23,6 +37,7 @@ namespace NExifTool
             set
             {
                 _exifParser = value == null ? new ExifParser() : value;
+                _exifParser.Quiet = Quiet;
             }
         }
         

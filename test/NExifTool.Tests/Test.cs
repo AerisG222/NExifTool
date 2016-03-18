@@ -88,6 +88,21 @@ namespace NExifTool.Tests
         }
         
         
+        [Fact]
+        public async void TestQuiet()
+        {
+            Console.WriteLine("---------------------");
+            Console.WriteLine("Quiet test (should not see spewage below)");
+            
+            var et = new ExifTool(new ExifToolOptions { Quiet = true });
+            var tags = (await et.GetTagsAsync("DSC_3982.NEF")).ToList();
+            
+            Console.WriteLine("---------------------");
+            
+            Assert.Equal(true, true);
+        }
+        
+        
         static Tag<T> GetExifData<T>(IEnumerable<Tag> exifData, string datapoint)
         {
             var t = GetExifData(exifData, datapoint);
