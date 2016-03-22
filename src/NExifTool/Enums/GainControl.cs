@@ -11,6 +11,7 @@ namespace NExifTool.Enums
         public static readonly GainControl HighGainUp = new GainControl(2, "High gain up");
         public static readonly GainControl LowGainDown = new GainControl(3, "Low gain down");
         public static readonly GainControl HighGainDown = new GainControl(4, "High gain down");
+        public static readonly GainControl Unknown = new GainControl(256, "Unknown");
         
         
         public GainControl(ushort key, string description)
@@ -29,6 +30,7 @@ namespace NExifTool.Enums
                 case 2: return HighGainUp;
                 case 3: return LowGainDown;
                 case 4: return HighGainDown;
+                case 256: return Unknown;
             }
             
             throw new ArgumentOutOfRangeException(nameof(key));
