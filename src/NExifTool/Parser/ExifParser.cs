@@ -395,7 +395,7 @@ namespace NExifTool.Parser
             {
                 if(!Quiet)
                 {
-                    Console.WriteLine($"error converting {info.TableName}::{info.Id}.  Expected type: {info.ValueType} but got value: {numberValue}");    
+                    Console.WriteLine($"error converting {info.TableName}::{info.Id} with name {info.Name}.  Expected type: {info.ValueType} but got value: {numberValue}");    
                 }
             }
             
