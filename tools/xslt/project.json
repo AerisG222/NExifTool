@@ -1,15 +1,14 @@
 {
     "title": "xslt",
     "authors": [ "Mike Morano <mmorano@mikeandwan.us>" ],
-    "summary": "dumb tool to facilitate xslt 2.0 transforms for NExifTool",
-    "compilationOptions": {
+    "packOptions": {
+        "summary": "dumb tool to facilitate xslt 2.0 transforms for NExifTool"
+    },
+    "buildOptions": {
         "emitEntryPoint": true
     },
     "commands": {
         "xslt": "Program" 
-    },
-    "dependencies": {
-        
     },
     "frameworks": {
         "dnx451": { 
@@ -17,6 +16,20 @@
                 "System.Xml": "",
                 "System.Xml.Linq": ""
             }
+        },
+        "netcoreapp1.0": {
+            "imports": [ 
+                "dotnet55", 
+                "portable-dnxcore50+net45+win8+wp8+wpa81" 
+            ],
+            "dependencies": {
+                "NETStandard.App": "1.5.0-rc2-*",
+                "System.Diagnostics.Process": "4.1.0-rc2-*",
+                "System.Xml.XDocument": "4.0.*"
+            }
         }
+    },
+    "runtimes":{
+        "ubuntu.14.04-x64": {}
     }
 }

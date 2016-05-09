@@ -1,2 +1,2 @@
 #!/bin/bash
-dnx -p xslt/project.json run ./exiftool.xml > ../src/NExifTool/ExifToolLookup.cs
+dotnet run -p xslt/project.json ./exiftool.xml > ../src/NExifTool/ExifToolLookup.cs
