@@ -1,3 +1,6 @@
+#0.5.0 (05/10/2016)
+- initial attempt at supporting both .net full framework and .net core
+
 #0.4.2 (03/17/2016)
 - allow the parser to be silent
 
