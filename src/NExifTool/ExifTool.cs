@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -63,7 +64,14 @@ namespace NExifTool
                 tcs.SetResult(result);
             };
 
-            _process.Start();
+            try
+            {
+                _process.Start();
+            }
+            catch (Win32Exception ex)
+            {
+                throw new Exception("Error when trying to start the exiftool process.  Please make sure exiftool is installed, and its path is properly specified in the options.", ex);
+            }
 
             return tcs.Task;
         }
