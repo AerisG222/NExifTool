@@ -1,3 +1,6 @@
+#0.6.0 (06/28/2016)
+- update to rtm
+
 #0.5.1 (05/21/2016)
 - updates to reference rc2 dependencies
 
