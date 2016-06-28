@@ -1,24 +1,19 @@
 {
     "dependencies": {
-        "dotnet-test-xunit": "1.0.0-*",
-        "NExifTool": "0.5.1",
-        "xunit": "2.1.0-*"
+        "dotnet-test-xunit": "2.2.0-*",
+        "NExifTool": "0.6.0",
+        "xunit": "2.2.0-*"
     },
     "testRunner": "xunit",
     "frameworks": {
         "netcoreapp1.0": {
             "dependencies": {
-                "Microsoft.NETCore.App": "1.0.0-rc2-3002702"
-            },
-            "imports": [
-                "netstandardapp1.5",
-                "portable-net451+win8",
-                "dotnet55",
-                "portable-net45+wp80+win8+wpa81+dnxcore50"
-            ]
+                "Microsoft.NETCore.App": "1.0.0"
+            }
         }
     },
     "runtimes":{
-        "ubuntu.14.04-x64": {}
+        "ubuntu.14.04-x64": { },
+        "fedora.23-x64": { }
     }
 }
