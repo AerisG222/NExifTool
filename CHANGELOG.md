@@ -1,3 +1,6 @@
+#0.6.1 (07/22/2016)
+- add support for getting tags from a stream w/o requiring writing a file to disk (see #2)
+
 #0.6.0 (06/28/2016)
 - update to rtm
 
