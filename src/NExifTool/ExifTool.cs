@@ -27,6 +27,12 @@ namespace NExifTool
             return GetTagsAsync(srcPath).Result;
         }
         
+
+        public IEnumerable<Tag> GetTags(Stream stream)
+        {
+            return GetTagsAsync(stream).Result;
+        }
+
         
         public async Task<IEnumerable<Tag>> GetTagsAsync(string srcPath)
         {
@@ -35,23 +41,45 @@ namespace NExifTool
                 throw new FileNotFoundException("Please make sure the image exists.", srcPath);
             }
             
-            var result = await RunProcessAsync(srcPath);
+            var psi = Options.GetStartInfo(srcPath);
+            var result = await RunProcessAsync(psi, null);
+            
+            return ParseTags(result);
+        }
+        
+
+        public async Task<IEnumerable<Tag>> GetTagsAsync(Stream stream)
+        {
+            if(stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
+            var psi = Options.GetStartInfo(stream);
+            var result = await RunProcessAsync(psi, stream);
+
+            return ParseTags(result);
+        }
+
+
+        IEnumerable<Tag> ParseTags(ExifToolResult result)
+        {
             var tags = Options.Parser.ParseTags(result.Output);
             
             _process.Dispose();
             
             return tags;
         }
-        
+
         
         // http://stackoverflow.com/questions/10788982/is-there-any-async-equivalent-of-process-start
-        Task<ExifToolResult> RunProcessAsync(string fileName)
+        Task<ExifToolResult> RunProcessAsync(ProcessStartInfo psi, Stream stream)
         {
             var tcs = new TaskCompletionSource<ExifToolResult>();
             
             _process = new Process
             {
-                StartInfo = Options.GetStartInfo(fileName),
+                StartInfo = psi,
                 EnableRaisingEvents = true
             };
 
@@ -67,6 +95,13 @@ namespace NExifTool
             try
             {
                 _process.Start();
+
+                if(stream != null)
+                {
+                    stream.CopyTo(_process.StandardInput.BaseStream);
+                    _process.StandardInput.Flush();
+                    _process.StandardInput.Dispose();
+                }
             }
             catch (Win32Exception ex)
             {

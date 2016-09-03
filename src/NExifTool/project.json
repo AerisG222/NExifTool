@@ -2,7 +2,7 @@
     "title": "NExifTool",
     "authors": [ "Mike Morano <mmorano@mikeandwan.us>" ],
     "description": ".Net wrapper for the excellent ExifTool",
-    "version": "0.6.0",
+    "version": "0.6.1",
     "packOptions": {
         "licenseUrl": "https://github.com/AerisG222/NExifTool/blob/master/LICENSE.md",
         "projectUrl": "https://github.com/AerisG222/NExifTool",

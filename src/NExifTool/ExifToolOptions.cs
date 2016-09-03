@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Text;
 using System.Diagnostics;
 using NExifTool.Parser;
@@ -44,23 +45,37 @@ namespace NExifTool
         
         public ProcessStartInfo GetStartInfo(string rawFile)
         {
+            var psi = BuildStartInfo();
+
+            psi.Arguments = $"{psi.Arguments} {EscapeFilename(rawFile)}";
+
+            return psi;
+        }
+
+
+        public ProcessStartInfo GetStartInfo(Stream stream)
+        {
+            var psi = BuildStartInfo();
+
+            psi.Arguments = $"{psi.Arguments} -";
+            psi.RedirectStandardInput = true;
+
+            return psi;
+        }
+        
+
+        ProcessStartInfo BuildStartInfo()
+        {
             var psi = new ProcessStartInfo();
             
             psi.FileName = ExifToolPath;
             psi.UseShellExecute = false;
             psi.RedirectStandardOutput = true;
-            
-            StringBuilder args = new StringBuilder();
-            
-            // xml seems to be the only one to dump table names and tag ids needed for lookup
-            args.Append("-X -t -ALL -ALL# ");
-            args.Append(EscapeFilename(rawFile));
-            
-            psi.Arguments = args.ToString();
-            
+            psi.Arguments = "-X -t -ALL -ALL#";
+
             return psi;
         }
-        
+
         
         string EscapeFilename(string file)
         {
