@@ -1,9 +1,9 @@
-[![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/AerisG222/NExifTool/blob/master/LICENSE.md)
-[![NuGet](https://img.shields.io/nuget/dt/NExifTool.svg)](https://www.nuget.org/packages/NExifTool/)
-[![NuGet](https://img.shields.io/nuget/v/NExifTool.svg)](https://www.nuget.org/packages/NExifTool/)
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/AerisG222/NExifTool/blob/master/LICENSE.md)
+[![NuGet](https://buildstats.info/nuget/NExifTool)](https://www.nuget.org/packages/NExifTool/)
+[![Travis](https://img.shields.io/travis/AerisG222/NExifTool.svg?maxAge=2592000)](https://travis-ci.org/AerisG222/NExifTool)
 [![Coverity Scan](https://img.shields.io/coverity/scan/7994.svg)](https://scan.coverity.com/projects/aerisg222-nexiftool)
 
-#NExifTool
+# NExifTool
 
 A .Net library to wrap the functionality of ExifTool.
 
