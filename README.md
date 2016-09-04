@@ -1,6 +1,6 @@
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/AerisG222/NExifTool/blob/master/LICENSE.md)
 [![NuGet](https://buildstats.info/nuget/NExifTool)](https://www.nuget.org/packages/NExifTool/)
-[![Travis](https://img.shields.io/travis/AerisG222/NExifTool.svg?maxAge=2592000)](https://travis-ci.org/AerisG222/NExifTool)
+[![Travis](https://img.shields.io/travis/AerisG222/NExifTool.svg)](https://travis-ci.org/AerisG222/NExifTool)
 [![Coverity Scan](https://img.shields.io/coverity/scan/7994.svg)](https://scan.coverity.com/projects/aerisg222-nexiftool)
 
 # NExifTool
