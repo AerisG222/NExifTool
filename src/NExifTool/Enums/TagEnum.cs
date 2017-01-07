@@ -1,6 +1,3 @@
-using System;
-
-
 namespace NExifTool.Enums
 {
     // 'enums' in this area derived from www.sno.phy.queensu.ca/~phil/exiftool/TagNames/EXIF.html

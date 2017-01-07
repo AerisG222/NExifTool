@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
-using NExifTool;
 using NExifTool.Enums;
 using NExifTool.Enums.Gps;
 using NExifTool.Enums.Nikon;

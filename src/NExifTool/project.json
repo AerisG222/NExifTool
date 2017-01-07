@@ -20,7 +20,7 @@
                 "System.Xml.Linq": ""
             }
         },
-        "netstandard1.5": {
+        "netstandard1.6": {
             "dependencies": {
                 "NETStandard.Library": {
                     "version": "1.6.0",

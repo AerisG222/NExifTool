@@ -1,6 +1,3 @@
-using System;
-
-
 namespace NExifTool.Parser
 {
     class ParseInfo

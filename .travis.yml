@@ -1,57 +1,29 @@
-# based on: https://github.com/nsubstitute/NSubstitute/blob/9f2323f4885d96ff863d0e26cc32b652b09ee930/.travis.yml
-language: generic
+language: csharp
 
 addons:
   apt:
     packages:
-    - gettext
-    - libcurl4-openssl-dev
-    - libicu-dev
-    - libssl-dev
-    - libunwind8
-    - zlib1g
-    - libimage-exiftool-perl
+      - libimage-exiftool-perl
 
 matrix:
   include:
     - os: linux
-      dist: trusty # Ubuntu 14.04
+      dist: trusty
       sudo: required
-      env: CONFIGURATION=Debug FRAMEWORK=netcoreapp1.0
+      dotnet: 1.0.0-preview2-003131
+      mono: none
+      env: CONFIGURATION=Debug DOTNETCORE=1
     - os: linux
       dist: trusty
       sudo: required
-      env: CONFIGURATION=Release FRAMEWORK=netcoreapp1.0
+      dotnet: 1.0.0-preview2-003131
+      mono: none
+      env: CONFIGURATION=Release DOTNETCORE=1
 
-before_install:
-  # Install OpenSSL
-  - if test "$TRAVIS_OS_NAME" == "osx"; then
-      brew install openssl;
-      brew link --force openssl;
-      export DOTNET_SDK_URL="https://go.microsoft.com/fwlink/?LinkID=809128";
-    else
-      export DOTNET_SDK_URL="https://go.microsoft.com/fwlink/?LinkID=809129";
-    fi
-  - export DOTNET_INSTALL_DIR="$PWD/.dotnetcli"
-  # Install .NET CLI
-  - mkdir $DOTNET_INSTALL_DIR
-  - curl -L $DOTNET_SDK_URL -o dotnet_package
-  - tar -xvzf dotnet_package -C $DOTNET_INSTALL_DIR
-  # Add dotnet to PATH
-  - export PATH="$DOTNET_INSTALL_DIR:$PATH"
-install:
-  # Display dotnet version info
-  - which dotnet;
-    if [ $? -eq 0 ]; then
-      echo "Using dotnet:";
-      dotnet --info;
-    else
-      echo "dotnet.exe not found"
-      exit 1;
-    fi
-  # Restore dependencies
-  - dotnet restore
 script:
-  # Run tests
-  - cd test/NExifTool.Tests
-  - dotnet test -c $CONFIGURATION -f $FRAMEWORK
+  - dotnet restore
+  - cd src/ConvertVideos
+  - dotnet build -c $CONFIGURATION -f netstandard1.6
+  - cd ../../test/ConvertVideos.Tests
+  - dotnet build -c $CONFIGURATION -f netcoreapp1.1
+  - dotnet test -c $CONFIGURATION -f netcoreapp1.1
