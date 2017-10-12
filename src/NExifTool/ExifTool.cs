@@ -2,17 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Diagnostics;
 using System.Threading.Tasks;
+using Medallion.Shell;
 
 
 namespace NExifTool
 {
     public class ExifTool
     {
-        Process _process;
-        
-        
         public ExifToolOptions Options { get; private set; }
         
         
@@ -34,81 +31,60 @@ namespace NExifTool
         }
 
         
-        public async Task<IEnumerable<Tag>> GetTagsAsync(string srcPath)
+        public Task<IEnumerable<Tag>> GetTagsAsync(string srcPath)
         {
             if(!File.Exists(srcPath))
             {
                 throw new FileNotFoundException("Please make sure the image exists.", srcPath);
             }
             
-            var psi = Options.GetStartInfo(srcPath);
-            var result = await RunProcessAsync(psi, null);
-            
-            return ParseTags(result);
+            var args = Options.GetArguments(srcPath);
+            return RunProcessAsync(args, null);
         }
         
 
-        public async Task<IEnumerable<Tag>> GetTagsAsync(Stream stream)
+        public Task<IEnumerable<Tag>> GetTagsAsync(Stream stream)
         {
             if(stream == null)
             {
                 throw new ArgumentNullException(nameof(stream));
             }
 
-            var psi = Options.GetStartInfo(stream);
-            var result = await RunProcessAsync(psi, stream);
-
-            return ParseTags(result);
+            var args = Options.GetArguments(stream);
+            return RunProcessAsync(args, stream);
         }
 
 
-        IEnumerable<Tag> ParseTags(ExifToolResult result)
+        IEnumerable<Tag> ParseTags(StreamReader output)
         {
-            var tags = Options.Parser.ParseTags(result.Output);
-            
-            _process.Dispose();
-            
-            return tags;
+            return Options.Parser.ParseTags(output);
         }
 
         
-        // http://stackoverflow.com/questions/10788982/is-there-any-async-equivalent-of-process-start
-        Task<ExifToolResult> RunProcessAsync(ProcessStartInfo psi, Stream stream)
+        async Task<IEnumerable<Tag>> RunProcessAsync(string[] args, Stream stream)
         {
-            var tcs = new TaskCompletionSource<ExifToolResult>();
-            
-            _process = new Process
-            {
-                StartInfo = psi,
-                EnableRaisingEvents = true
-            };
-
-            _process.Exited += (sender, args) =>
-            {
-                var result = new ExifToolResult {
-                    Output = _process.StandardOutput
-                };
-                
-                tcs.SetResult(result);
-            };
+            Command cmd = null;
 
             try
             {
-                _process.Start();
-
-                if(stream != null)
+                if(stream == null)
                 {
-                    stream.CopyTo(_process.StandardInput.BaseStream);
-                    _process.StandardInput.Flush();
-                    _process.StandardInput.Dispose();
+                    cmd = Command.Run(Options.ExifToolPath, args);
                 }
+                else
+                {
+                    cmd = Command.Run(Options.ExifToolPath, args) < stream;
+                }
+
+                await cmd.Task;
+
+                var sr = new StreamReader(cmd.StandardOutput.BaseStream);
+                return ParseTags(sr);
             }
             catch (Win32Exception ex)
             {
                 throw new Exception("Error when trying to start the exiftool process.  Please make sure exiftool is installed, and its path is properly specified in the options.", ex);
             }
-
-            return tcs.Task;
         }
     }
 }

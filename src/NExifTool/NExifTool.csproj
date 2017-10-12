@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <Description>.Net wrapper for the excellent ExifTool</Description>
     <AssemblyTitle>NExifTool</AssemblyTitle>
-    <VersionPrefix>0.6.1</VersionPrefix>
+    <VersionPrefix>0.7.0</VersionPrefix>
     <Authors>Mike Morano &lt;mmorano@mikeandwan.us&gt;</Authors>
     <TargetFrameworks>netstandard1.6</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -13,12 +12,10 @@
     <PackageTags>exif;exiftool;photography</PackageTags>
     <PackageProjectUrl>https://github.com/AerisG222/NExifTool</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/AerisG222/NExifTool/blob/master/LICENSE.md</PackageLicenseUrl>
-    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.6' ">1.6.0</NetStandardImplicitPackageVersion>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
-    <PackageReference Include="System.Diagnostics.Process" Version="4.1.0" />
-    <PackageReference Include="System.Xml.XDocument" Version="4.0.11" />
+  <ItemGroup>
+    <PackageReference Include="MedallionShell" Version="1.5.0" />
+    <PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
   </ItemGroup>
-
 </Project>

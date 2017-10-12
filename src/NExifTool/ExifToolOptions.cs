@@ -1,5 +1,5 @@
+using System.Collections.Generic;
 using System.IO;
-using System.Diagnostics;
 using NExifTool.Parser;
 
 
@@ -41,43 +41,36 @@ namespace NExifTool
         }
         
         
-        public ProcessStartInfo GetStartInfo(string rawFile)
+        public string[] GetArguments(string rawFile)
         {
-            var psi = BuildStartInfo();
+            var args = GetDefaultArguments();
 
-            psi.Arguments = $"{psi.Arguments} {EscapeFilename(rawFile)}";
+            args.Add(rawFile);
 
-            return psi;
+            return args.ToArray();
         }
 
 
-        public ProcessStartInfo GetStartInfo(Stream stream)
+        public string[] GetArguments(Stream stream)
         {
-            var psi = BuildStartInfo();
+            var args = GetDefaultArguments();
 
-            psi.Arguments = $"{psi.Arguments} -";
-            psi.RedirectStandardInput = true;
+            args.Add("-");
 
-            return psi;
+            return args.ToArray();
         }
         
 
-        ProcessStartInfo BuildStartInfo()
+        List<string> GetDefaultArguments()
         {
-            var psi = new ProcessStartInfo();
-            
-            psi.FileName = ExifToolPath;
-            psi.UseShellExecute = false;
-            psi.RedirectStandardOutput = true;
-            psi.Arguments = "-X -t -ALL -ALL#";
+            var list = new List<string>();
 
-            return psi;
-        }
+            list.Add("-X");
+            list.Add("-t");
+            list.Add("-ALL");
+            list.Add("-ALL#");
 
-        
-        string EscapeFilename(string file)
-        {
-            return $"\"{file}\"";
+            return list;
         }
     }
 }

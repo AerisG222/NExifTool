@@ -10,20 +10,20 @@ matrix:
     - os: linux
       dist: trusty
       sudo: required
-      dotnet: 1.0.1
+      dotnet: 2.0.0
       mono: none
       env: CONFIGURATION=Debug DOTNETCORE=1
     - os: linux
       dist: trusty
       sudo: required
-      dotnet: 1.0.1
+      dotnet: 2.0.0
       mono: none
       env: CONFIGURATION=Release DOTNETCORE=1
 
 script:
   - dotnet restore
   - cd src/NExifTool
-  - dotnet build -c $CONFIGURATION -f netstandard1.6
+  - dotnet build -c $CONFIGURATION
   - cd ../../test/NExifTool.Tests
-  - dotnet build -c $CONFIGURATION -f netcoreapp1.1
-  - dotnet test -c $CONFIGURATION -f netcoreapp1.1
+  - dotnet build -c $CONFIGURATION
+  - dotnet test -c $CONFIGURATION
