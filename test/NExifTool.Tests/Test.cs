@@ -27,7 +27,7 @@ namespace NExifTool.Tests
                 {
                     var sft = tsft.TypedValue;
                     
-                    Assert.True(string.Equals(sft.Description, "Full-resolution Image", StringComparison.OrdinalIgnoreCase));
+                    Assert.Equal("Full-resolution Image", sft.Description, true);
                 }
             }
             
@@ -98,8 +98,6 @@ namespace NExifTool.Tests
             var tags = (await et.GetTagsAsync("DSC_3982.NEF")).ToList();
             
             Console.WriteLine("---------------------");
-            
-            Assert.Equal(true, true);
         }
         
 
