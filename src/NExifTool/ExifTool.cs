@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
 using Medallion.Shell;
+using NExifTool.Writer;
 
 
 namespace NExifTool
@@ -19,24 +20,9 @@ namespace NExifTool
         }
         
         
-        public IEnumerable<Tag> GetTags(string srcPath)
-        {
-            return GetTagsAsync(srcPath).Result;
-        }
-        
-
-        public IEnumerable<Tag> GetTags(Stream stream)
-        {
-            return GetTagsAsync(stream).Result;
-        }
-
-        
         public Task<IEnumerable<Tag>> GetTagsAsync(string srcPath)
         {
-            if(!File.Exists(srcPath))
-            {
-                throw new FileNotFoundException("Please make sure the image exists.", srcPath);
-            }
+            VerifySourceFile(srcPath);
             
             var args = Options.GetArguments(srcPath);
             return RunProcessAsync(args, null);
@@ -52,6 +38,51 @@ namespace NExifTool
 
             var args = Options.GetArguments(stream);
             return RunProcessAsync(args, stream);
+        }
+
+
+        public void OverwriteTagsAsync(string srcPath, IEnumerable<TagUpdateSpec> updates)
+        {
+            VerifySourceFile(srcPath);
+        }
+
+
+        public Stream OverwriteTagsAsync(Stream src, IEnumerable<TagUpdateSpec> updates)
+        {
+
+        }
+
+
+        public void WriteTagsAsync(string srcPath, IEnumerable<TagUpdateSpec> updates, string dstPath)
+        {
+            VerifySourceFile(srcPath);
+        }
+
+
+        public Stream WriteTagsAsync(string srcPath, IEnumerable<TagUpdateSpec> updates)
+        {
+            VerifySourceFile(srcPath);
+        }
+
+
+        public void WriteTagsAsync(Stream stream, IEnumerable<TagUpdateSpec> updates)
+        {
+
+        }
+
+
+        public void WriteTagsAsync(Stream stream, IEnumerable<TagUpdateSpec> updates, string dstPath)
+        {
+
+        }
+
+
+        void VerifySourceFile(string srcPath)
+        {
+            if(!File.Exists(srcPath))
+            {
+                throw new FileNotFoundException("Please make sure the image exists.", srcPath);
+            }
         }
 
 
@@ -85,6 +116,12 @@ namespace NExifTool
             {
                 throw new Exception("Error when trying to start the exiftool process.  Please make sure exiftool is installed, and its path is properly specified in the options.", ex);
             }
+        }
+
+
+        async Task RunWriteProcessAsync(string srcPath)
+        {
+
         }
     }
 }
