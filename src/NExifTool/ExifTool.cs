@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Medallion.Shell;
 using NExifTool.Writer;
@@ -12,22 +13,22 @@ namespace NExifTool
     public class ExifTool
     {
         public ExifToolOptions Options { get; private set; }
-        
-        
+
+
         public ExifTool(ExifToolOptions options)
         {
             Options = options;
         }
-        
-        
+
+
         public Task<IEnumerable<Tag>> GetTagsAsync(string srcPath)
         {
             VerifySourceFile(srcPath);
-            
+
             var args = Options.GetArguments(srcPath);
             return RunProcessAsync(args, null);
         }
-        
+
 
         public Task<IEnumerable<Tag>> GetTagsAsync(Stream stream)
         {
@@ -41,39 +42,56 @@ namespace NExifTool
         }
 
 
-        public void OverwriteTagsAsync(string srcPath, IEnumerable<TagUpdateSpec> updates)
+        public Task<WriteResult> OverwriteTagsAsync(string srcPath, IEnumerable<Operation> updates)
         {
             VerifySourceFile(srcPath);
+            VerifyUpdates(updates);
+
+            var runner = new FileToFileRunner(Options, srcPath, srcPath, true);
+
+            return runner.RunProcessAsync(updates);
         }
 
 
-        public Stream OverwriteTagsAsync(Stream src, IEnumerable<TagUpdateSpec> updates)
-        {
-
-        }
-
-
-        public void WriteTagsAsync(string srcPath, IEnumerable<TagUpdateSpec> updates, string dstPath)
-        {
-            VerifySourceFile(srcPath);
-        }
-
-
-        public Stream WriteTagsAsync(string srcPath, IEnumerable<TagUpdateSpec> updates)
+        public Task<WriteResult> WriteTagsAsync(string srcPath, IEnumerable<Operation> updates, string dstPath)
         {
             VerifySourceFile(srcPath);
+            VerifyUpdates(updates);
+
+            var runner = new FileToFileRunner(Options, srcPath, dstPath, false);
+
+            return runner.RunProcessAsync(updates);
         }
 
 
-        public void WriteTagsAsync(Stream stream, IEnumerable<TagUpdateSpec> updates)
+        public Task<WriteResult> WriteTagsAsync(string srcPath, IEnumerable<Operation> updates)
         {
+            VerifySourceFile(srcPath);
+            VerifyUpdates(updates);
 
+            var runner = new FileToStreamRunner(Options, srcPath);
+
+            return runner.RunProcessAsync(updates);
         }
 
 
-        public void WriteTagsAsync(Stream stream, IEnumerable<TagUpdateSpec> updates, string dstPath)
+        public Task<WriteResult> WriteTagsAsync(Stream src, IEnumerable<Operation> updates)
         {
+            VerifyUpdates(updates);
 
+            var runner = new StreamToStreamRunner(Options, src);
+
+            return runner.RunProcessAsync(updates);
+        }
+
+
+        public Task<WriteResult> WriteTagsAsync(Stream src, IEnumerable<Operation> updates, string dstPath)
+        {
+            VerifyUpdates(updates);
+
+            var runner = new StreamToFileRunner(Options, src, dstPath);
+
+            return runner.RunProcessAsync(updates);
         }
 
 
@@ -86,12 +104,26 @@ namespace NExifTool
         }
 
 
+        void VerifyUpdates(IEnumerable<Operation> updates)
+        {
+            if(updates == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            if(updates.Count() == 0)
+            {
+                throw new ArgumentException("No update operations specified!", nameof(updates));
+            }
+        }
+
+
         IEnumerable<Tag> ParseTags(StreamReader output)
         {
             return Options.Parser.ParseTags(output);
         }
 
-        
+
         async Task<IEnumerable<Tag>> RunProcessAsync(string[] args, Stream stream)
         {
             Command cmd = null;
@@ -116,12 +148,6 @@ namespace NExifTool
             {
                 throw new Exception("Error when trying to start the exiftool process.  Please make sure exiftool is installed, and its path is properly specified in the options.", ex);
             }
-        }
-
-
-        async Task RunWriteProcessAsync(string srcPath)
-        {
-
         }
     }
 }
