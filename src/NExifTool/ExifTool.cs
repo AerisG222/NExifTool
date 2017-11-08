@@ -139,7 +139,7 @@ namespace NExifTool
                     cmd = Command.Run(Options.ExifToolPath, args) < stream;
                 }
 
-                await cmd.Task;
+                await cmd.Task.ConfigureAwait(false);
 
                 var sr = new StreamReader(cmd.StandardOutput.BaseStream);
                 return ParseTags(sr);

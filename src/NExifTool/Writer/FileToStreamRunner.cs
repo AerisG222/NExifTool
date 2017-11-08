@@ -33,7 +33,7 @@ namespace NExifTool.Writer
                     opts.StartInfo(si => si.Arguments = args);
                 }) > ms;
 
-                var result = await cmd.Task;
+                var result = await cmd.Task.ConfigureAwait(false);
 
                 ms.Seek(0, SeekOrigin.Begin);
 

@@ -45,7 +45,7 @@ namespace NExifTool.Writer
                     opts.StartInfo(si => si.Arguments = args);
                 });
 
-                var result = await cmd.Task;
+                var result = await cmd.Task.ConfigureAwait(false);
 
                 return new WriteResult(result.Success, null);
             }
