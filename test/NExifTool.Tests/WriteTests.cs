@@ -6,12 +6,15 @@ using Xunit;
 using NExifTool.Enums;
 using NExifTool.Writer;
 
+
 namespace NExifTool.Tests
 {
     public class WriteTests
     {
         const string SRC_FILE = "space test.jpg";
-        const string COMMENT = "\"this is a test\"";  // note: it is currently up to the consumer to properly escape  values if needed
+
+        // japanese string taken from here: https://stackoverflow.com/questions/2627891/does-process-startinfo-arguments-support-a-utf-8-string
+        const string COMMENT = "\"this is a これはテストです test\"";  // note: it is currently up to the consumer to properly escape  values if needed
 
         readonly List<Operation> UPDATES = new List<Operation> {
             new SetOperation("comment", COMMENT)
@@ -47,8 +50,6 @@ namespace NExifTool.Tests
             Assert.Null(result.Output);
 
             ValidateTag(await et.GetTagsAsync("stream_to_file_test.jpg"));
-
-            File.Delete("stream_to_file_test.jpg");
         }
 
 
