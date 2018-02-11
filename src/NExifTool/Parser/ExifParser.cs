@@ -14,11 +14,11 @@ namespace NExifTool.Parser
     {
         const string EXIF_TOOL_TAG_NAME = "ExifToolVersion";
         byte _exifToolTagCounter = 0;
-        
-        
+
+
         public bool Quiet { get; set; }
-        
-           
+
+
         bool IsNumericSection
         {
             get
@@ -26,21 +26,21 @@ namespace NExifTool.Parser
                 return _exifToolTagCounter > 1;
             }
         }
-        
-        
+
+
         public virtual IList<Tag> ParseTags(StreamReader reader)
         {
             var list = new List<Tag>();
-            
+
             foreach(var pi in GetParseInfo(reader))
             {
                 list.Add(BuildTag(pi));
             }
-            
+
             return list;
         }
-        
-                
+
+
         IEnumerable<ParseInfo> GetParseInfo(StreamReader reader)
         {
             var doc = XDocument.Load(reader);
@@ -48,19 +48,19 @@ namespace NExifTool.Parser
             XNamespace nsEt = "http://ns.exiftool.ca/1.0/";
             var tags = new Dictionary<string, ParseInfo>();
             var els = doc.Element(nsRdf + "RDF").Element(nsRdf + "Description");
-            
+
             foreach(var el in els.Elements())
             {
                 if(string.Equals(el.Name.LocalName, EXIF_TOOL_TAG_NAME, StringComparison.OrdinalIgnoreCase))
                 {
                     _exifToolTagCounter++;
                 }
-                
+
                 var tableName = el.Attribute(nsEt + "table").Value;
                 var tagId = el.Attribute(nsEt + "id").Value;
                 var val = el.Value;
                 var key = TagInfo.GenerateLookupKey(tableName, tagId);
-                    
+
                 if(!IsNumericSection)
                 {
                     tags[key] = new ParseInfo {
@@ -85,39 +85,44 @@ namespace NExifTool.Parser
                     }
                 }
             }
-            
+
             return tags.Values;
         }
-        
-                
+
+
         TagInfo GetTagInfo(string tableName, string tagId)
         {
             var key = TagInfo.GenerateLookupKey(tableName, tagId);
-            
+
             if(ExifToolLookup.Details.ContainsKey(key))
             {
                 return ExifToolLookup.Details[key];
             }
             else
             {
-                return new TagInfo { TableName = tableName, Id = tagId };
+                // we saw some extended properties that were in the following form:
+                // apple-fi:RegionsRegionListExtensionsAngleInfoYaw
+                // we now split on the ':' and retain the last element to use for the name
+                var idParts = tagId.Split(new string[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
+
+                return new TagInfo { TableName = tableName, Id = tagId, Name = idParts[idParts.Length - 1] };
             }
         }
-        
-        
+
+
         Tag BuildTag(ParseInfo pi)
         {
             var ti = GetTagInfo(pi.TableName, pi.TagId);
             var tag = CreateSpecificTag(ti, pi.NumberValue);
-            
+
             tag.TagInfo = ti;
             tag.Value = pi.Value;
             tag.NumberValue = pi.NumberValue;
-            
+
             return tag;
         }
-        
-        
+
+
         Tag CreateSpecificTag(TagInfo info, string numberValue)
         {
             try
@@ -154,7 +159,7 @@ namespace NExifTool.Parser
                             return new Tag<GpsDifferential> { TypedValue = GpsDifferential.FromKey(ushort.Parse(numberValue)) };
                     }
                 }
-                
+
                 if(info.IsNikon)
                 {
                     switch(info.Name.ToLower())
@@ -217,7 +222,7 @@ namespace NExifTool.Parser
                             return new Tag<NikonHighIsoNoiseReduction> { TypedValue = NikonHighIsoNoiseReduction.FromKey(ushort.Parse(numberValue)) };
                     }
                 }
-                
+
                 if(info.IsExif)
                 {
                     switch(info.Name.ToLower())
@@ -258,7 +263,7 @@ namespace NExifTool.Parser
                             return new Tag<Indexed> { TypedValue = Indexed.FromKey(ushort.Parse(numberValue)) };
                         case "opiproxy":
                             return new Tag<OpiProxy> { TypedValue = OpiProxy.FromKey(ushort.Parse(numberValue)) };
-                        case "profiletype":    
+                        case "profiletype":
                             return new Tag<ProfileType> { TypedValue = ProfileType.FromKey(ushort.Parse(numberValue)) };
                         case "faxprofile":
                             return new Tag<FaxProfile> { TypedValue = FaxProfile.FromKey(ushort.Parse(numberValue)) };
@@ -315,7 +320,7 @@ namespace NExifTool.Parser
                         case "gaincontrol":
                             return new Tag<GainControl> { TypedValue = GainControl.FromKey(ushort.Parse(numberValue)) };
                         case "contrast":
-                            return new Tag<Contrast> { TypedValue = Contrast.FromKey(ushort.Parse(numberValue)) };    
+                            return new Tag<Contrast> { TypedValue = Contrast.FromKey(ushort.Parse(numberValue)) };
                         case "saturation":
                             return new Tag<Saturation> { TypedValue = Saturation.FromKey(ushort.Parse(numberValue)) };
                         case "sharpness":
@@ -350,20 +355,20 @@ namespace NExifTool.Parser
                             return new Tag<DefaultBlackRender> { TypedValue = DefaultBlackRender.FromKey(ushort.Parse(numberValue)) };
                     }
                 }
-                
+
                 // ---- VALUE TAG ----
                 if(string.IsNullOrEmpty(info.ValueType))
                 {
                     return new Tag();
                 }
-                
+
                 switch(info.ValueType.ToLower())
                 {
                     case "int8u":
                         return new Tag<byte> { TypedValue = byte.Parse(numberValue) };
                     case "int8s":
                         return new Tag<sbyte> { TypedValue = sbyte.Parse(numberValue) };
-                    case "int16u": 
+                    case "int16u":
                         return new Tag<ushort> { TypedValue = ushort.Parse(numberValue) };
                     case "int16s":
                         return new Tag<short> { TypedValue = short.Parse(numberValue) };
@@ -394,11 +399,11 @@ namespace NExifTool.Parser
             {
                 if(!Quiet)
                 {
-                    Console.WriteLine($"error converting {info.TableName}::{info.Id} with name {info.Name}.  Expected type: {info.ValueType} but got value: {numberValue}");    
+                    Console.WriteLine($"error converting {info.TableName}::{info.Id} with name {info.Name}.  Expected type: {info.ValueType} but got value: {numberValue}");
                 }
             }
-            
+
             return new Tag();
         }
-    } 
+    }
 }

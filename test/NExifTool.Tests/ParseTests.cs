@@ -11,6 +11,26 @@ namespace NExifTool.Tests
     public class ParseTests
     {
         [Fact]
+        public async void HasExtensionTags()
+        {
+            var et = new ExifTool(new ExifToolOptions());
+
+            var res = (await et.GetTagsAsync("35781602-96011d02-09ec-11e8-9335-aaa98042aa5a.jpg"))
+                .Where(x => x.TagInfo.Id.StartsWith("apple"))
+                .ToList();
+
+            foreach(var tag in res)
+            {
+                Console.WriteLine($"{tag.GetType()} : {tag.TagInfo.Id} : {tag.TagInfo.Name} : {tag.TagInfo.Description} : {tag.Value}");
+            }
+
+            Assert.True(res.Count() > 0);
+            Assert.True(res.Count(x => x.TagInfo.Id == "apple-fi:RegionsRegionListExtensionsAngleInfoYaw" ) == 1);
+            Assert.True(res.Count(x => x.TagInfo.Name == "RegionsRegionListExtensionsAngleInfoYaw" ) == 1);
+        }
+
+
+        [Fact]
         public async void GetTagsFromImage()
         {
             var et = new ExifTool(new ExifToolOptions());
