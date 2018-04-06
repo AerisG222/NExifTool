@@ -33,5 +33,8 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net45' ">
     <PackageReference Include="Microsoft.TargetingPack.NETFramework.v4.5" Version="1.0.1" ExcludeAssets="All" PrivateAssets="All" />
+
+    <!-- the dll in the above targeting pack for XML does not match the expected casing, and adding the line below fixes that for Linux builds -->
+    <Reference Include="System.XML" />
   </ItemGroup>
 </Project>
