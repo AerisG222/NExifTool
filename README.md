@@ -17,6 +17,7 @@ To create a simple wrapper around this excellent program to allow
 - Bring down the packages for your project via `dnu restore`
 
 ```csharp
+using System.Threading.Tasks;
 using NExifTool;
 
 namespace Test
