@@ -23,10 +23,12 @@ namespace Test
 {
     public class Example
     {
-        public void Test(string srcFilename)
+        public async Task Test(string srcFilename)
         {
             var et = new ExifTool(new ExifToolOptions());
-            var list = (await et.GetTagsAsync(srcFilename)).ToList();
+            var list = await et.GetTagsAsync(srcFilename);
+            
+            // use list...
         }
     }
 }
