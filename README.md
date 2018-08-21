@@ -26,7 +26,7 @@ namespace Test
         public void Test(string srcFilename)
         {
             var et = new ExifTool(new ExifToolOptions());
-            var list = et.GetTagsAsync(srcFilename);
+            var list = (await et.GetTagsAsync(srcFilename)).ToList();
         }
     }
 }
