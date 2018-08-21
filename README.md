@@ -17,16 +17,19 @@ To create a simple wrapper around this excellent program to allow
 - Bring down the packages for your project via `dnu restore`
 
 ```csharp
+using System.Threading.Tasks;
 using NExifTool;
 
 namespace Test
 {
     public class Example
     {
-        public void Test(string srcFilename)
+        public async Task Test(string srcFilename)
         {
-            var et = new ExifTool();
-            var list = et.GetTags(srcFilename);
+            var et = new ExifTool(new ExifToolOptions());
+            var list = await et.GetTagsAsync(srcFilename);
+            
+            // use list...
         }
     }
 }
