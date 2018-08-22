@@ -4,17 +4,17 @@
 [![Coverity Scan](https://img.shields.io/coverity/scan/7994.svg)](https://scan.coverity.com/projects/aerisg222-nexiftool)
 
 # NExifTool
-
-A .Net library to wrap the functionality of ExifTool.
+A .NET library to wrap the functionality of ExifTool.
 
 ## Motivation
 To create a simple wrapper around this excellent program to allow
-.Net programs to easily access exif data for images.
+.NET programs to easily access exif data for images.
 
-## Using
-- Install ExifTool
-- Add a reference to NExifTool in your project.json
-- Bring down the packages for your project via `dnu restore`
+## Installation
+- NExifTool depends on ExifTool from https://www.sno.phy.queensu.ca/~phil/exiftool/ in order to work, therefore, ExifTool must be installed.
+- NExifTool can then be added to your project via the NuGet package.
+
+## Usage
 
 ```csharp
 using System.Threading.Tasks;
@@ -61,5 +61,6 @@ I hope to make many improvements to the library as time permits.
 NExifTool is licensed under the MIT license.  See LICENSE.md for more
 information.
 
-## Reference
+## Dependencies
 - ExifTool: http://www.sno.phy.queensu.ca/~phil/exiftool/
+- MadellionShell: https://github.com/madelson/MedallionShell/
