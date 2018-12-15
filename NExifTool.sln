@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NExifTool.Tests", "test\NEx
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{0367289E-50B6-4533-8B04-CBCDEA3C5652}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xslt", "tools\xslt\xslt.csproj", "{4C5AF5F3-5604-488F-BA1A-3224C69EF540}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExifLookupCodegen", "tools\ExifLookupCodegen\ExifLookupCodegen.csproj", "{4C5AF5F3-5604-488F-BA1A-3224C69EF540}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
