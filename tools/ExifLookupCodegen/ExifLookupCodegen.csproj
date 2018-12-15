@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <AssemblyTitle>xslt</AssemblyTitle>
+        <Authors>Mike Morano &lt;mmorano@mikeandwan.us&gt;</Authors>
+        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <AssemblyName>ExifLookupCodegen</AssemblyName>
+        <OutputType>Exe</OutputType>
+        <PackageId>ExifLookupCodegen</PackageId>
+    </PropertyGroup>
+
+</Project>
