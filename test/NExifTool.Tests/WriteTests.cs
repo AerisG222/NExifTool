@@ -40,16 +40,19 @@ namespace NExifTool.Tests
         [Fact]
         public async void StreamToFileWriteTest()
         {
+            var testfile = "stream_to_file_test.jpg";
             var opts = new ExifToolOptions();
             var et = new ExifTool(opts);
             var src = new FileStream(SRC_FILE, FileMode.Open);
 
-            var result = await et.WriteTagsAsync(src, UPDATES, "stream_to_file_test.jpg");
+            var result = await et.WriteTagsAsync(src, UPDATES, testfile);
 
             Assert.True(result.Success);
             Assert.Null(result.Output);
 
-            ValidateTag(await et.GetTagsAsync("stream_to_file_test.jpg"));
+            ValidateTag(await et.GetTagsAsync(testfile));
+
+            File.Delete(testfile);
         }
 
 

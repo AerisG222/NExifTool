@@ -26,22 +26,17 @@ namespace NExifTool.Writer
         public override async Task<WriteResult> RunProcessAsync(IEnumerable<Operation> updates)
         {
             var updateArgs = GetUpdateArgs(updates);
-            var args = $"{updateArgs} -o {EscapeFilePath(_dst)} -";
+            var runner = new StreamToStreamRunner(_options, _src);
+            var result = await runner.RunProcessAsync(updates);
 
-            try
+            if(result.Success)
             {
-                var cmd = Command.Run(_options.ExifToolPath, options: opts => {
-                    opts.StartInfo(si => si.Arguments = args);
-                }) < _src;
+                await result.Output.CopyToAsync(new FileStream(_dst, FileMode.CreateNew, FileAccess.ReadWrite));
 
-                var result = await cmd.Task.ConfigureAwait(false);
+                return new WriteResult(true, null);
+            }
 
-                return new WriteResult(result.Success, null);
-            }
-            catch (Win32Exception ex)
-            {
-                throw new Exception("Error when trying to start the exiftool process.  Please make sure exiftool is installed, and its path is properly specified in the options.", ex);
-            }
+            return new WriteResult(false, null);
         }
     }
 }

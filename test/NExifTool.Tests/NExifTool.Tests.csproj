@@ -5,6 +5,7 @@
     <AssemblyName>NExifTool.Tests</AssemblyName>
     <PackageId>NExifTool.Tests</PackageId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>
