@@ -60,6 +60,13 @@ namespace NExifTool.Tests
             }
 
             Assert.True(res.Count() > 0);
+
+            var keywords = res.SingleOrDefaultPrimaryTag("keywords");
+
+            Assert.NotNull(keywords);
+            Assert.NotNull(keywords.List);
+            Assert.Equal(3, keywords.List.Count);
+            Assert.Equal("Fay Canyon", keywords.List[1]);
         }
 
 
