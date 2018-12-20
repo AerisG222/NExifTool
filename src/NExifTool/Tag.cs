@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-
+using NExifTool.Writer;
 
 namespace NExifTool
 {
@@ -50,6 +50,46 @@ namespace NExifTool
             List = list?.ToList()?.AsReadOnly();
         }
 
+
+        public Tag(string name, string value)
+        {
+            if(string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            if(string.IsNullOrEmpty(value))
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
+            Name = name;
+            Value = value;
+        }
+
+
+        public Tag(string name, double value)
+        {
+            if(string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            Name = name;
+            NumberValue = value.ToString();
+        }
+
+
+        public Tag(string name, IEnumerable<string> list)
+        {
+            if(string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentNullException(nameof(list));
+            }
+
+            Name = name;
+            List = list.ToList().AsReadOnly();
+        }
 
         public long? TryGetInt64()
         {
@@ -267,6 +307,22 @@ namespace NExifTool
             {
                 return null;
             }
+        }
+
+
+        internal string ValueToWrite()
+        {
+            if(List != null)
+            {
+                return string.Join(Operation.ListSeparator, List);
+            }
+
+            if(NumberValue != null)
+            {
+                return NumberValue;
+            }
+
+            return Value;
         }
     }
 }

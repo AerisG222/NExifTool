@@ -13,10 +13,11 @@ namespace NExifTool.Tests
         const string SRC_FILE = "space test.jpg";
 
         // japanese string taken from here: https://stackoverflow.com/questions/2627891/does-process-startinfo-arguments-support-a-utf-8-string
-        const string COMMENT = "\"this is a これはテストです test\"";  // note: it is currently up to the consumer to properly escape  values if needed
+        const string COMMENT = "this is a これはテストです test";
 
         readonly List<Operation> UPDATES = new List<Operation> {
-            new SetOperation("comment", COMMENT)
+            new SetOperation(new Tag("comment", COMMENT)),
+            new SetOperation(new Tag("keywords", new string[] { "first", "second", "third", "hello world" }))
         };
 
 
@@ -32,7 +33,7 @@ namespace NExifTool.Tests
             Assert.True(result.Success);
             Assert.NotNull(result.Output);
 
-            ValidateTag(await et.GetTagsAsync(result.Output));
+            ValidateTags(await et.GetTagsAsync(result.Output));
         }
 
 
@@ -49,7 +50,7 @@ namespace NExifTool.Tests
             Assert.True(result.Success);
             Assert.Null(result.Output);
 
-            ValidateTag(await et.GetTagsAsync(testfile));
+            ValidateTags(await et.GetTagsAsync(testfile));
 
             File.Delete(testfile);
         }
@@ -66,7 +67,7 @@ namespace NExifTool.Tests
             Assert.True(result.Success);
             Assert.NotNull(result.Output);
 
-            ValidateTag(await et.GetTagsAsync(result.Output));
+            ValidateTags(await et.GetTagsAsync(result.Output));
         }
 
 
@@ -81,9 +82,9 @@ namespace NExifTool.Tests
             Assert.True(result.Success);
             Assert.Null(result.Output);
 
-            ValidateTag(await et.GetTagsAsync("file_to_file_test.jpg"));
+            ValidateTags(await et.GetTagsAsync("file_to_file_test.jpg"));
 
-            File.Delete("file_to_file_test.jpg");
+            //File.Delete("file_to_file_test.jpg");
         }
 
 
@@ -100,18 +101,24 @@ namespace NExifTool.Tests
             Assert.True(result.Success);
             Assert.Null(result.Output);
 
-            ValidateTag(await et.GetTagsAsync("overwrite_test.jpg"));
+            ValidateTags(await et.GetTagsAsync("overwrite_test.jpg"));
 
             File.Delete("overwrite_test.jpg");
         }
 
 
-        void ValidateTag(IEnumerable<Tag> tags)
+        void ValidateTags(IEnumerable<Tag> tags)
         {
-            var tag = tags.SingleOrDefault(x => string.Equals(x.Name, "comment", StringComparison.OrdinalIgnoreCase));
+            var commentTag = tags.SingleOrDefault(x => string.Equals(x.Name, "comment", StringComparison.OrdinalIgnoreCase));
+            var keywordsTag = tags.SinglePrimaryTag("keywords");
 
-            Assert.NotNull(tag);
-            Assert.Equal(COMMENT.Replace("\"", string.Empty), tag.Value);
+            Assert.NotNull(commentTag);
+            Assert.Equal(COMMENT.Replace("\"", string.Empty), commentTag.Value);
+
+            Assert.NotNull(keywordsTag);
+            Assert.Equal(4, keywordsTag.List.Count);
+            Assert.Equal("first", keywordsTag.List[0]);
+            Assert.Equal("hello world", keywordsTag.List[3]);
         }
     }
 }

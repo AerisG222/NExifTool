@@ -6,13 +6,13 @@ namespace NExifTool.Writer
     public class DeleteOperation
         : Operation
     {
-        public DeleteOperation(string target)
-            : base(target)
+        public DeleteOperation(Tag tag)
+            : base(tag)
         {
 
         }
 
 
-        internal override string ToArg() => $"-{Target}=";
+        internal override string ToArg() => $"-{Target.Name}=";
     }
 }

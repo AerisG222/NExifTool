@@ -6,20 +6,13 @@ namespace NExifTool.Writer
     public class AddOperation
         : Operation
     {
-        public string Value { get; private set; }
-
-        public AddOperation(string target, string value)
-            : base(target)
+        public AddOperation(Tag tag)
+            : base(tag)
         {
-            if(string.IsNullOrWhiteSpace(value))
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
 
-            Value = value;
         }
 
 
-        internal override string ToArg() => $"-{Target}+={Value}";
+        internal override string ToArg() => $"-{Target.Name}+=\"{Target.ValueToWrite()}\"";
     }
 }

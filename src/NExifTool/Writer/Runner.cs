@@ -21,6 +21,8 @@ namespace NExifTool.Writer
         {
             var sb = new StringBuilder();
 
+            sb.Append($"{Operation.ListSeparatorArg} ");
+
             foreach(var update in updates)
             {
                 sb.Append($"{update.ToArg()} ");
