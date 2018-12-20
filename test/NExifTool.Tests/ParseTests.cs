@@ -71,6 +71,23 @@ namespace NExifTool.Tests
 
 
         [Fact]
+        public async void GetRegionExtensionsTagWithSpaces()
+        {
+            var et = new ExifTool(new ExifToolOptions());
+
+            var res = (await et.GetTagsAsync("35781602-96011d02-09ec-11e8-9335-aaa98042aa5a.jpg")).ToList();
+
+            var region = res.SingleOrDefaultPrimaryTag("RegionAreaY");
+
+            Assert.NotNull(region);
+            Assert.NotNull(region.List);
+            Assert.Equal(2, region.List.Count);
+            Assert.Equal(0.4605, Convert.ToDouble(region.List[0]));
+            Assert.Equal(0.4710, Convert.ToDouble(region.List[1]));
+        }
+
+
+        [Fact]
         public async void TestFilenameWithSpace()
         {
             var et = new ExifTool(new ExifToolOptions());
