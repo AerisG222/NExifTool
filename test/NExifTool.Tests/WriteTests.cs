@@ -84,7 +84,7 @@ namespace NExifTool.Tests
 
             ValidateTags(await et.GetTagsAsync("file_to_file_test.jpg"));
 
-            //File.Delete("file_to_file_test.jpg");
+            File.Delete("file_to_file_test.jpg");
         }
 
 
