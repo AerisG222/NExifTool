@@ -29,7 +29,7 @@ namespace NExifTool
 
             var reader = new ExifReader(_opts);
             var parser = new ExifParser();
-            var exifJson = await reader.ReadExifAsync(srcPath);
+            var exifJson = await reader.ReadExifAsync(srcPath).ConfigureAwait(false);
 
             return parser.ParseTags(exifJson);
         }
@@ -44,7 +44,7 @@ namespace NExifTool
 
             var reader = new ExifReader(_opts);
             var parser = new ExifParser();
-            var exifJson = await reader.ReadExifAsync(stream);
+            var exifJson = await reader.ReadExifAsync(stream).ConfigureAwait(false);
 
             return parser.ParseTags(exifJson);
         }

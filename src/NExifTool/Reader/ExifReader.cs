@@ -25,18 +25,18 @@ namespace NExifTool.Reader
         public async Task<JObject> ReadExifAsync(Stream imageStream)
         {
             var args = GetArguments(imageStream);
-            var exifDataStream = await GetExifDataAsync(args, imageStream);
+            var exifDataStream = await GetExifDataAsync(args, imageStream).ConfigureAwait(false);
 
-            return await GetJsonAsync(exifDataStream);
+            return await GetJsonAsync(exifDataStream).ConfigureAwait(false);
         }
 
 
         public async Task<JObject> ReadExifAsync(string imagePath)
         {
             var args = GetArguments(imagePath);
-            var exifDataStream = await GetExifDataAsync(args, null);
+            var exifDataStream = await GetExifDataAsync(args, null).ConfigureAwait(false);
 
-            return await GetJsonAsync(exifDataStream);
+            return await GetJsonAsync(exifDataStream).ConfigureAwait(false);
         }
 
 
@@ -46,7 +46,7 @@ namespace NExifTool.Reader
 
             using(var sr = new StreamReader(exifDataStream))
             {
-                token = await JToken.ReadFromAsync(new JsonTextReader(sr));
+                token = await JToken.ReadFromAsync(new JsonTextReader(sr)).ConfigureAwait(false);
             }
 
             if(token == null)

@@ -27,11 +27,11 @@ namespace NExifTool.Writer
         {
             var updateArgs = GetUpdateArgs(updates);
             var runner = new StreamToStreamRunner(_options, _src);
-            var result = await runner.RunProcessAsync(updates);
+            var result = await runner.RunProcessAsync(updates).ConfigureAwait(false);
 
             if(result.Success)
             {
-                await result.Output.CopyToAsync(new FileStream(_dst, FileMode.CreateNew, FileAccess.ReadWrite));
+                await result.Output.CopyToAsync(new FileStream(_dst, FileMode.CreateNew, FileAccess.ReadWrite)).ConfigureAwait(false);
 
                 return new WriteResult(true, null);
             }
