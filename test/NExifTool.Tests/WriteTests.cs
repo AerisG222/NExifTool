@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Xunit;
-using NExifTool.Enums;
 using NExifTool.Writer;
 
 
@@ -91,7 +90,7 @@ namespace NExifTool.Tests
         [Fact]
         public async void OverwriteTest()
         {
-            File.Copy(SRC_FILE, "overwrite_test.jpg");
+            File.Copy(SRC_FILE, "overwrite_test.jpg", true);
 
             var opts = new ExifToolOptions();
             var et = new ExifTool(opts);
@@ -109,7 +108,7 @@ namespace NExifTool.Tests
 
         void ValidateTag(IEnumerable<Tag> tags)
         {
-            var tag = tags.SingleOrDefault(x => string.Equals(x.TagInfo.Name, "comment", StringComparison.OrdinalIgnoreCase));
+            var tag = tags.SingleOrDefault(x => string.Equals(x.Name, "comment", StringComparison.OrdinalIgnoreCase));
 
             Assert.NotNull(tag);
             Assert.Equal(COMMENT.Replace("\"", string.Empty), tag.Value);

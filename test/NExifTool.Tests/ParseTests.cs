@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Xunit;
-using NExifTool.Enums;
+using NExifTool;
 
 
 namespace NExifTool.Tests
@@ -14,19 +14,20 @@ namespace NExifTool.Tests
         public async void HasExtensionTags()
         {
             var et = new ExifTool(new ExifToolOptions());
+            var tags = await et.GetTagsAsync("35781602-96011d02-09ec-11e8-9335-aaa98042aa5a.jpg");
 
-            var res = (await et.GetTagsAsync("35781602-96011d02-09ec-11e8-9335-aaa98042aa5a.jpg"))
-                .Where(x => x.TagInfo.Id.StartsWith("apple"))
+            var res = tags
+                .Where(x => x.Id.StartsWith("apple"))
                 .ToList();
 
             foreach(var tag in res)
             {
-                Console.WriteLine($"{tag.GetType()} : {tag.TagInfo.Id} : {tag.TagInfo.Name} : {tag.TagInfo.Description} : {tag.Value}");
+                Console.WriteLine($"{tag.Id} : {tag.Name} : {tag.Description} : {tag.Value}");
             }
 
-            Assert.True(res.Count() > 0);
-            Assert.True(res.Count(x => x.TagInfo.Id == "apple-fi:RegionsRegionListExtensionsAngleInfoYaw" ) == 1);
-            Assert.True(res.Count(x => x.TagInfo.Name == "RegionsRegionListExtensionsAngleInfoYaw" ) == 1);
+            Assert.True(res.Count() > 0, "HasExtensionTags::1");
+            Assert.True(res.Count(x => x.Id == "apple-fi:RegionsRegionListExtensionsAngleInfoYaw" ) >= 1, "HasExtensionTags::2");
+            Assert.True(res.Count(x => x.Name == "RegionExtensionsAngleInfoYaw" ) >= 1, "HasExtensionTags::3");
         }
 
 
@@ -39,16 +40,7 @@ namespace NExifTool.Tests
 
             foreach(var tag in res)
             {
-                Console.WriteLine($"{tag.GetType()} : {tag.TagInfo.Name} : {tag.TagInfo.Description} : {tag.Value}");
-
-                var tsft = tag as Tag<SubfileType>;
-
-                if(tsft != null)
-                {
-                    var sft = tsft.TypedValue;
-
-                    Assert.Equal("Full-resolution Image", sft.Description, true);
-                }
+                Console.WriteLine($"{tag.Name} : {tag.Description} : {tag.Value}");
             }
 
             Assert.True(res.Count() > 0);
@@ -56,11 +48,18 @@ namespace NExifTool.Tests
 
 
         [Fact]
-        public void TestEnums()
+        public async void GetTagsFromImageWithKeywords()
         {
-            var st = SubfileType.FromKey(0);
+            var et = new ExifTool(new ExifToolOptions());
 
-            Assert.True(st == SubfileType.FullResolutionImage);
+            var res = (await et.GetTagsAsync("50032922-56e5cc00-ffee-11e8-9cc9-a1330b3a909f.jpg")).ToList();
+
+            foreach(var tag in res)
+            {
+                Console.WriteLine($"{tag.Name} : {tag.Description} : {tag.Value}");
+            }
+
+            Assert.True(res.Count() > 0);
         }
 
 
@@ -74,50 +73,23 @@ namespace NExifTool.Tests
         }
 
 
-        [Fact(Skip = "used primarily to support some dev work")]
-        public void DumpDistinctTypes()
-        {
-            var types = ExifToolLookup.Details.Values
-                .Select(x => x.ValueType)
-                .Distinct()
-                .ToList();
-
-            foreach(var t in types)
-            {
-                Console.WriteLine(t);
-            }
-        }
-
-
         [Fact]
         public async void TestExifValues()
         {
             var et = new ExifTool(new ExifToolOptions());
             var tags = (await et.GetTagsAsync("DSC_3982.NEF")).ToList();
 
-            var bitsPerSample = GetExifData<ushort>(tags, "BitsPerSample")?.TypedValue;
-            var digitalZoomRatio = GetExifData<double>(tags, "DigitalZoomRatio")?.TypedValue;
-            var expTime = GetExifData<double>(tags, "ExposureTime");
+            var bitsPerSampleTag = tags.SingleOrDefaultPrimaryTag("BitsPerSample");
+            var bitsPerSample = bitsPerSampleTag?.TryGetUInt16();
+            var digitalZoomRatio = tags.SingleOrDefaultPrimaryTag("DigitalZoomRatio")?.TryGetDouble();
+            var expTime = tags.SingleOrDefaultPrimaryTag("ExposureTime");
 
-            Assert.True(bitsPerSample == 14, "bits per sample should be 14 for this photo");
-            Assert.True(digitalZoomRatio == 1, "digital zoom ratio should be 1 for this photo");
+            Assert.Equal((ushort?)14, bitsPerSample);
+            Assert.Equal((double?)1, digitalZoomRatio);
 
             Assert.Equal("1/500", expTime.Value);
             Assert.Equal("0.002", expTime.NumberValue);
-            Assert.Equal(.002, expTime.TypedValue);
-        }
-
-
-        [Fact]
-        public async void TestQuiet()
-        {
-            Console.WriteLine("---------------------");
-            Console.WriteLine("Quiet test (should not see spewage below)");
-
-            var et = new ExifTool(new ExifToolOptions { Quiet = true });
-            var tags = (await et.GetTagsAsync("DSC_3982.NEF")).ToList();
-
-            Console.WriteLine("---------------------");
+            Assert.Equal(.002, expTime.GetDouble());
         }
 
 
@@ -133,47 +105,17 @@ namespace NExifTool.Tests
                 var et = new ExifTool(new ExifToolOptions());
                 var tags = (await et.GetTagsAsync(ms)).ToList();
 
-                var bitsPerSample = GetExifData<ushort>(tags, "BitsPerSample")?.TypedValue;
-                var digitalZoomRatio = GetExifData<double>(tags, "DigitalZoomRatio")?.TypedValue;
-                var expTime = GetExifData<double>(tags, "ExposureTime");
+                var bitsPerSample = tags.SingleOrDefaultPrimaryTag("BitsPerSample")?.TryGetUInt16();
+                var digitalZoomRatio = tags.SingleOrDefaultPrimaryTag("DigitalZoomRatio")?.TryGetDouble();
+                var expTime = tags.SingleOrDefaultPrimaryTag("ExposureTime");
 
-                Assert.True(bitsPerSample == 14, "bits per sample should be 14 for this photo");
-                Assert.True(digitalZoomRatio == 1, "digital zoom ratio should be 1 for this photo");
+                Assert.Equal((ushort?)14, bitsPerSample);
+                Assert.Equal((double?)1, digitalZoomRatio);
 
                 Assert.Equal("1/500", expTime.Value);
                 Assert.Equal("0.002", expTime.NumberValue);
-                Assert.Equal(.002, expTime.TypedValue);
+                Assert.Equal(0.002, expTime.GetDouble());
             }
-        }
-
-
-        static Tag<T> GetExifData<T>(IEnumerable<Tag> exifData, string datapoint)
-        {
-            var t = GetExifData(exifData, datapoint);
-
-            if(t == null)
-            {
-                return null;
-            }
-
-            try
-            {
-                return (Tag<T>)t;
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine($"error trying to cast tag for {datapoint}.  Was expecting {typeof(T)} but got {t.GetType()} with value {t.Value}");
-
-                throw ex;
-            }
-        }
-
-
-        static Tag GetExifData(IEnumerable<Tag> exifData, string datapoint)
-        {
-            var tag = exifData.SingleOrDefault(x => string.Equals(x.TagInfo.Name, datapoint, StringComparison.OrdinalIgnoreCase));
-
-            return tag;
         }
     }
 }

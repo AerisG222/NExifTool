@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Medallion.Shell;
+using NExifTool.Parser;
+using NExifTool.Reader;
 using NExifTool.Writer;
 
 
@@ -12,33 +14,39 @@ namespace NExifTool
 {
     public class ExifTool
     {
-        public ExifToolOptions Options { get; private set; }
+        readonly ExifToolOptions _opts;
 
 
-        public ExifTool(ExifToolOptions options)
+        public ExifTool(ExifToolOptions opts)
         {
-            Options = options;
+            _opts = opts ?? throw new ArgumentNullException(nameof(opts));
         }
 
 
-        public Task<IEnumerable<Tag>> GetTagsAsync(string srcPath)
+        public async Task<IEnumerable<Tag>> GetTagsAsync(string srcPath)
         {
             VerifySourceFile(srcPath);
 
-            var args = Options.GetArguments(srcPath);
-            return RunProcessAsync(args, null);
+            var reader = new ExifReader(_opts);
+            var parser = new ExifParser();
+            var exifJson = await reader.ReadExifAsync(srcPath);
+
+            return parser.ParseTags(exifJson);
         }
 
 
-        public Task<IEnumerable<Tag>> GetTagsAsync(Stream stream)
+        public async Task<IEnumerable<Tag>> GetTagsAsync(Stream stream)
         {
             if(stream == null)
             {
                 throw new ArgumentNullException(nameof(stream));
             }
 
-            var args = Options.GetArguments(stream);
-            return RunProcessAsync(args, stream);
+            var reader = new ExifReader(_opts);
+            var parser = new ExifParser();
+            var exifJson = await reader.ReadExifAsync(stream);
+
+            return parser.ParseTags(exifJson);
         }
 
 
@@ -47,7 +55,7 @@ namespace NExifTool
             VerifySourceFile(srcPath);
             VerifyUpdates(updates);
 
-            var runner = new FileToFileRunner(Options, srcPath, srcPath, true);
+            var runner = new FileToFileRunner(_opts, srcPath, srcPath, true);
 
             return runner.RunProcessAsync(updates);
         }
@@ -58,7 +66,7 @@ namespace NExifTool
             VerifySourceFile(srcPath);
             VerifyUpdates(updates);
 
-            var runner = new FileToFileRunner(Options, srcPath, dstPath, false);
+            var runner = new FileToFileRunner(_opts, srcPath, dstPath, false);
 
             return runner.RunProcessAsync(updates);
         }
@@ -69,7 +77,7 @@ namespace NExifTool
             VerifySourceFile(srcPath);
             VerifyUpdates(updates);
 
-            var runner = new FileToStreamRunner(Options, srcPath);
+            var runner = new FileToStreamRunner(_opts, srcPath);
 
             return runner.RunProcessAsync(updates);
         }
@@ -79,7 +87,7 @@ namespace NExifTool
         {
             VerifyUpdates(updates);
 
-            var runner = new StreamToStreamRunner(Options, src);
+            var runner = new StreamToStreamRunner(_opts, src);
 
             return runner.RunProcessAsync(updates);
         }
@@ -89,7 +97,7 @@ namespace NExifTool
         {
             VerifyUpdates(updates);
 
-            var runner = new StreamToFileRunner(Options, src, dstPath);
+            var runner = new StreamToFileRunner(_opts, src, dstPath);
 
             return runner.RunProcessAsync(updates);
         }
@@ -114,39 +122,6 @@ namespace NExifTool
             if(updates.Count() == 0)
             {
                 throw new ArgumentException("No update operations specified!", nameof(updates));
-            }
-        }
-
-
-        IEnumerable<Tag> ParseTags(StreamReader output)
-        {
-            return Options.Parser.ParseTags(output);
-        }
-
-
-        async Task<IEnumerable<Tag>> RunProcessAsync(string[] args, Stream stream)
-        {
-            Command cmd = null;
-
-            try
-            {
-                if(stream == null)
-                {
-                    cmd = Command.Run(Options.ExifToolPath, args);
-                }
-                else
-                {
-                    cmd = Command.Run(Options.ExifToolPath, args) < stream;
-                }
-
-                await cmd.Task.ConfigureAwait(false);
-
-                var sr = new StreamReader(cmd.StandardOutput.BaseStream);
-                return ParseTags(sr);
-            }
-            catch (Win32Exception ex)
-            {
-                throw new Exception("Error when trying to start the exiftool process.  Please make sure exiftool is installed, and its path is properly specified in the options.", ex);
             }
         }
     }

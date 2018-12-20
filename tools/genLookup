@@ -1,9 +1,0 @@
-#!/bin/bash
-exiftool -listx > exiftool.xml
-
-cd ExifLookupCodegen
-
-dotnet build --configuration Release
-dotnet bin/Release/netcoreapp2.2/ExifLookupCodegen.dll ../exiftool.xml > ../../src/NExifTool/ExifToolLookup.cs
-
-cd ..
