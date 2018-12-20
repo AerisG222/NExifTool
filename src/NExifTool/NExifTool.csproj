@@ -12,7 +12,7 @@
         <PackageId>NExifTool</PackageId>
         <PackageTags>exif;exiftool;photography</PackageTags>
         <PackageProjectUrl>https://github.com/AerisG222/NExifTool</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/AerisG222/NExifTool/LICENSE.md</PackageLicenseUrl>
+        <PackageLicenseUrl>https://github.com/AerisG222/NExifTool/blob/master/LICENSE.md</PackageLicenseUrl>
     </PropertyGroup>
 
     <ItemGroup>
