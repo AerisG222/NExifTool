@@ -71,7 +71,7 @@ namespace NExifTool.Tests
 
 
         [Fact]
-        public async void GetRegionExtensionsTagWithSpaces()
+        public async void GetRegionExtensionsTags()
         {
             var et = new ExifTool(new ExifToolOptions());
 
