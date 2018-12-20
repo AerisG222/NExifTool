@@ -1,41 +1,41 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <Description>.Net wrapper for the excellent ExifTool</Description>
-    <AssemblyTitle>NExifTool</AssemblyTitle>
-    <VersionPrefix>0.9.0</VersionPrefix>
-    <VersionSuffix>beta</VersionSuffix>
-    <Authors>Mike Morano &lt;mmorano@mikeandwan.us&gt;</Authors>
-    <TargetFrameworks>netstandard1.6;net461;net45</TargetFrameworks>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DebugType>portable</DebugType>
-    <AssemblyName>NExifTool</AssemblyName>
-    <PackageId>NExifTool</PackageId>
-    <PackageTags>exif;exiftool;photography</PackageTags>
-    <PackageProjectUrl>https://github.com/AerisG222/NExifTool</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/AerisG222/NExifTool/blob/master/LICENSE.md</PackageLicenseUrl>
-  </PropertyGroup>
+    <PropertyGroup>
+        <Description>.Net wrapper for the excellent ExifTool</Description>
+        <AssemblyTitle>NExifTool</AssemblyTitle>
+        <VersionPrefix>0.9.0</VersionPrefix>
+        <VersionSuffix>beta</VersionSuffix>
+        <Authors>Mike Morano &lt;mmorano@mikeandwan.us&gt;</Authors>
+        <TargetFrameworks>netstandard1.6;net461;net45</TargetFrameworks>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <DebugType>portable</DebugType>
+        <AssemblyName>NExifTool</AssemblyName>
+        <PackageId>NExifTool</PackageId>
+        <PackageTags>exif;exiftool;photography</PackageTags>
+        <PackageProjectUrl>https://github.com/AerisG222/NExifTool</PackageProjectUrl>
+        <license>MIT</license>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="MedallionShell" Version="1.5.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="MedallionShell" Version="1.5.1" />
+        <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    </ItemGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <FrameworkPathOverride>$(NuGetPackageRoot)microsoft.targetingpack.netframework.v4.6.1\1.0.1\lib\net461\</FrameworkPathOverride>
-  </PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' ">
+        <FrameworkPathOverride>$(NuGetPackageRoot)microsoft.targetingpack.netframework.v4.6.1\1.0.1\lib\net461\</FrameworkPathOverride>
+    </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <PackageReference Include="Microsoft.TargetingPack.NETFramework.v4.6.1" Version="1.0.1" ExcludeAssets="All" PrivateAssets="All" />
-  </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
+        <PackageReference Include="Microsoft.TargetingPack.NETFramework.v4.6.1" Version="1.0.1" ExcludeAssets="All" PrivateAssets="All" />
+    </ItemGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <FrameworkPathOverride>$(NuGetPackageRoot)microsoft.targetingpack.netframework.v4.5\1.0.1\lib\net45\</FrameworkPathOverride>
-  </PropertyGroup>
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
+        <FrameworkPathOverride>$(NuGetPackageRoot)microsoft.targetingpack.netframework.v4.5\1.0.1\lib\net45\</FrameworkPathOverride>
+    </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net45' ">
-    <PackageReference Include="Microsoft.TargetingPack.NETFramework.v4.5" Version="1.0.1" ExcludeAssets="All" PrivateAssets="All" />
+    <ItemGroup Condition="'$(TargetFramework)' == 'net45' ">
+        <PackageReference Include="Microsoft.TargetingPack.NETFramework.v4.5" Version="1.0.1" ExcludeAssets="All" PrivateAssets="All" />
 
-    <!-- the dll in the above targeting pack for XML does not match the expected casing, and adding the line below fixes that for Linux builds -->
-    <Reference Include="System.XML" />
-  </ItemGroup>
+        <!-- the dll in the above targeting pack for XML does not match the expected casing, and adding the line below fixes that for Linux builds -->
+        <Reference Include="System.XML" />
+    </ItemGroup>
 </Project>
