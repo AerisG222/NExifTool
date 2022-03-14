@@ -18,23 +18,4 @@
         <PackageReference Include="MedallionShell" Version="1.5.1" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     </ItemGroup>
-
-    <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' ">
-        <FrameworkPathOverride>$(NuGetPackageRoot)microsoft.targetingpack.netframework.v4.6.1\1.0.1\lib\net461\</FrameworkPathOverride>
-    </PropertyGroup>
-
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
-        <PackageReference Include="Microsoft.TargetingPack.NETFramework.v4.6.1" Version="1.0.1" ExcludeAssets="All" PrivateAssets="All" />
-    </ItemGroup>
-
-    <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
-        <FrameworkPathOverride>$(NuGetPackageRoot)microsoft.targetingpack.netframework.v4.5\1.0.1\lib\net45\</FrameworkPathOverride>
-    </PropertyGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'net45' ">
-        <PackageReference Include="Microsoft.TargetingPack.NETFramework.v4.5" Version="1.0.1" ExcludeAssets="All" PrivateAssets="All" />
-
-        <!-- the dll in the above targeting pack for XML does not match the expected casing, and adding the line below fixes that for Linux builds -->
-        <Reference Include="System.XML" />
-    </ItemGroup>
 </Project>
