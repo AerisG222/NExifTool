@@ -14,7 +14,7 @@ namespace NExifTool.Writer
         readonly string _src;
         readonly string _dst;
         readonly bool _overwrite;
-
+        readonly OverwriteMode? _overwriteMode;
 
         public FileToFileRunner(ExifToolOptions opts, string src, string dst, bool overwrite)
             : base(opts)
@@ -24,6 +24,14 @@ namespace NExifTool.Writer
             _overwrite = overwrite;
         }
 
+        public FileToFileRunner(ExifToolOptions opts, string src, string dst, bool overwrite, OverwriteMode? overwriteMode)
+            : base(opts)
+        {
+            _src = src ?? throw new ArgumentNullException(nameof(src));
+            _dst = dst ?? throw new ArgumentNullException(nameof(dst));
+            _overwrite = overwrite;
+            _overwriteMode = overwriteMode;
+        }
 
         public override async Task<WriteResult> RunProcessAsync(IEnumerable<Operation> updates)
         {
@@ -32,7 +40,7 @@ namespace NExifTool.Writer
 
             if(_overwrite)
             {
-                args = $"{updateArgs} -overwrite_original {EscapeFilePath(_src)}";
+                args = $"{updateArgs} {ParseOverwriteMode(_overwriteMode)} {EscapeFilePath(_src)}";
             }
             else
             {

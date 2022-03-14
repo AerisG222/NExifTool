@@ -60,6 +60,16 @@ namespace NExifTool
             return runner.RunProcessAsync(updates);
         }
 
+        public Task<WriteResult> OverwriteTagsAsync(string srcPath, IEnumerable<Operation> updates, OverwriteMode? overwriteMode)
+        {
+            VerifySourceFile(srcPath);
+            VerifyUpdates(updates);
+
+            var runner = new FileToFileRunner(_opts, srcPath, srcPath, true, overwriteMode);
+
+            return runner.RunProcessAsync(updates);
+        }
+
 
         public Task<WriteResult> WriteTagsAsync(string srcPath, IEnumerable<Operation> updates, string dstPath)
         {
