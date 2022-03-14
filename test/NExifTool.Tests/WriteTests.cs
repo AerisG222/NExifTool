@@ -96,7 +96,7 @@ namespace NExifTool.Tests
             var opts = new ExifToolOptions();
             var et = new ExifTool(opts);
 
-            var result = await et.OverwriteTagsAsync("overwrite_test.jpg", UPDATES);
+            var result = await et.OverwriteTagsAsync("overwrite_test.jpg", UPDATES, FileWriteMode.OverwriteOriginal);
 
             Assert.True(result.Success);
             Assert.Null(result.Output);
@@ -104,6 +104,25 @@ namespace NExifTool.Tests
             ValidateTags(await et.GetTagsAsync("overwrite_test.jpg"));
 
             File.Delete("overwrite_test.jpg");
+        }
+
+
+        [Fact]
+        public async void OverwriteOriginalInPlaceTest()
+        {
+            File.Copy(SRC_FILE, "overwrite_original_in_place_test.jpg", true);
+
+            var opts = new ExifToolOptions();
+            var et = new ExifTool(opts);
+
+            var result = await et.OverwriteTagsAsync("overwrite_original_in_place_test.jpg", UPDATES, FileWriteMode.OverwriteOriginalInPlace);
+
+            Assert.True(result.Success);
+            Assert.Null(result.Output);
+
+            ValidateTags(await et.GetTagsAsync("overwrite_original_in_place_test.jpg"));
+
+            File.Delete("overwrite_original_in_place_test.jpg");
         }
 
 

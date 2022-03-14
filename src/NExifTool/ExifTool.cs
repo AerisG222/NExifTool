@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Medallion.Shell;
 using NExifTool.Parser;
 using NExifTool.Reader;
 using NExifTool.Writer;
@@ -50,22 +48,12 @@ namespace NExifTool
         }
 
 
-        public Task<WriteResult> OverwriteTagsAsync(string srcPath, IEnumerable<Operation> updates)
+        public Task<WriteResult> OverwriteTagsAsync(string srcPath, IEnumerable<Operation> updates, FileWriteMode writeMode)
         {
             VerifySourceFile(srcPath);
             VerifyUpdates(updates);
 
-            var runner = new FileToFileRunner(_opts, srcPath, srcPath, true);
-
-            return runner.RunProcessAsync(updates);
-        }
-
-        public Task<WriteResult> OverwriteTagsAsync(string srcPath, IEnumerable<Operation> updates, OverwriteMode? overwriteMode)
-        {
-            VerifySourceFile(srcPath);
-            VerifyUpdates(updates);
-
-            var runner = new FileToFileRunner(_opts, srcPath, srcPath, true, overwriteMode);
+            var runner = new FileToFileRunner(_opts, srcPath, writeMode);
 
             return runner.RunProcessAsync(updates);
         }
@@ -76,7 +64,7 @@ namespace NExifTool
             VerifySourceFile(srcPath);
             VerifyUpdates(updates);
 
-            var runner = new FileToFileRunner(_opts, srcPath, dstPath, false);
+            var runner = new FileToFileRunner(_opts, srcPath, dstPath);
 
             return runner.RunProcessAsync(updates);
         }

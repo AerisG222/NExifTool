@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Threading.Tasks;
 using Medallion.Shell;
 
@@ -13,24 +12,28 @@ namespace NExifTool.Writer
     {
         readonly string _src;
         readonly string _dst;
-        readonly bool _overwrite;
-        readonly OverwriteMode? _overwriteMode;
+        readonly FileWriteMode _writeMode;
 
-        public FileToFileRunner(ExifToolOptions opts, string src, string dst, bool overwrite)
+        public FileToFileRunner(ExifToolOptions opts, string src, string dst)
             : base(opts)
         {
             _src = src ?? throw new ArgumentNullException(nameof(src));
             _dst = dst ?? throw new ArgumentNullException(nameof(dst));
-            _overwrite = overwrite;
+            _writeMode = FileWriteMode.WriteNew;
         }
 
-        public FileToFileRunner(ExifToolOptions opts, string src, string dst, bool overwrite, OverwriteMode? overwriteMode)
+        public FileToFileRunner(ExifToolOptions opts, string src, FileWriteMode writeMode)
             : base(opts)
         {
             _src = src ?? throw new ArgumentNullException(nameof(src));
-            _dst = dst ?? throw new ArgumentNullException(nameof(dst));
-            _overwrite = overwrite;
-            _overwriteMode = overwriteMode;
+            _dst = src;
+
+            if(!IsOverwriteMode(writeMode))
+            {
+                throw new ArgumentException("Please specify one of the Overwrite FileWriteModes when using this constructor.");
+            }
+
+            _writeMode = writeMode;
         }
 
         public override async Task<WriteResult> RunProcessAsync(IEnumerable<Operation> updates)
@@ -38,9 +41,9 @@ namespace NExifTool.Writer
             var updateArgs = GetUpdateArgs(updates);
             string args = null;
 
-            if(_overwrite)
+            if(IsOverwriteMode(_writeMode))
             {
-                args = $"{updateArgs} {ParseOverwriteMode(_overwriteMode)} {EscapeFilePath(_src)}";
+                args = $"{updateArgs} {GetOverwriteArgument(_writeMode)} {EscapeFilePath(_src)}";
             }
             else
             {
@@ -60,6 +63,33 @@ namespace NExifTool.Writer
             catch (Win32Exception ex)
             {
                 throw new Exception("Error when trying to start the exiftool process.  Please make sure exiftool is installed, and its path is properly specified in the options.", ex);
+            }
+        }
+
+
+        protected string GetOverwriteArgument(FileWriteMode mode)
+        {
+            switch(mode)
+            {
+                case FileWriteMode.OverwriteOriginalInPlace:
+                    return "-overwrite_original_in_place";
+                case FileWriteMode.OverwriteOriginal:
+                    return "-overwrite_original";
+                default:
+                    throw new InvalidOperationException("Unexpected overwrite mode!");
+            }
+        }
+
+
+        bool IsOverwriteMode(FileWriteMode mode)
+        {
+            switch(mode)
+            {
+                case FileWriteMode.OverwriteOriginal:
+                case FileWriteMode.OverwriteOriginalInPlace:
+                    return true;
+                default:
+                    return false;
             }
         }
     }
