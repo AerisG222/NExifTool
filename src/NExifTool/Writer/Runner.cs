@@ -38,6 +38,17 @@ namespace NExifTool.Writer
         }
 
 
+        protected string ParseOverwriteMode(OverwriteMode? overwrite)
+        {
+            if (overwrite == null)
+                return "-overwrite_original";
+
+            if (overwrite == OverwriteMode.OVERWRITE_ORIGINAL_IN_PLACE)
+                return "-overwrite_original_in_place";
+            else
+                return "-overwrite_original";
+        }
+
         public abstract Task<WriteResult> RunProcessAsync(IEnumerable<Operation> updates);
     }
 }
