@@ -1,3 +1,7 @@
+# 0.11.0 (03/18/2022)
+
+- introduce `EscapeTagValues` option to pass `-E` to exiftool to help with character encoding
+
 # 0.10.0 (03/14/2022)
 
 - introduce flag to control how files are overwritten (thanks to @bagsergen)
