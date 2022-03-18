@@ -28,6 +28,16 @@ namespace NExifTool.Writer
                 sb.Append($"{update.ToArg()} ");
             }
 
+            if(_options.IncludeBinaryTags)
+            {
+                sb.Append("-b ");
+            }
+
+            if(_options.EscapeTagValues)
+            {
+                sb.Append("-E ");
+            }
+
             return sb.ToString();
         }
 

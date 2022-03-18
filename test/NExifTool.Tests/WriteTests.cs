@@ -14,10 +14,18 @@ namespace NExifTool.Tests
 
         // japanese string taken from here: https://stackoverflow.com/questions/2627891/does-process-startinfo-arguments-support-a-utf-8-string
         const string COMMENT = "this is a これはテストです test";
+        const string COMMENT_ENCODED = "&#x11E;&#xDC;&#x15E;&#x130;&#xD6;&#xC7;&#x11F;&#xFC;&#x15F;i&#xF6;&#xE7;";
+
+        // when writing the above encoded value manually via exiftool, it looks like it does some char replacements and results in the following:
+        const string EXIFTOOL_ENCODED_COMMENT = "&#x11e;&Uuml;&#x15e;&#x130;&Ouml;&Ccedil;&#x11f;&uuml;&#x15f;i&ouml;&ccedil;";
 
         readonly List<Operation> UPDATES = new List<Operation> {
             new SetOperation(new Tag("comment", COMMENT)),
             new SetOperation(new Tag("keywords", new string[] { "first", "second", "third", "hello world" }))
+        };
+
+        readonly List<Operation> UPDATES_ENCODED = new List<Operation> {
+            new SetOperation(new Tag("comment", COMMENT_ENCODED)),
         };
 
 
@@ -89,6 +97,27 @@ namespace NExifTool.Tests
 
 
         [Fact]
+        public async void FileToFileWriteTestEncoded()
+        {
+            var opts = new ExifToolOptions()
+            {
+                EscapeTagValues = true
+            };
+
+            var et = new ExifTool(opts);
+
+            var result = await et.WriteTagsAsync(SRC_FILE, UPDATES_ENCODED, "file_to_file_encoded_test.jpg");
+
+            Assert.True(result.Success);
+            Assert.Null(result.Output);
+
+            ValidateEncodedTag(await et.GetTagsAsync("file_to_file_encoded_test.jpg"));
+
+            File.Delete("file_to_file_encoded_test.jpg");
+        }
+
+
+        [Fact]
         public async void OverwriteTest()
         {
             File.Copy(SRC_FILE, "overwrite_test.jpg", true);
@@ -138,6 +167,14 @@ namespace NExifTool.Tests
             Assert.Equal(4, keywordsTag.List.Count);
             Assert.Equal("first", keywordsTag.List[0]);
             Assert.Equal("hello world", keywordsTag.List[3]);
+        }
+
+        void ValidateEncodedTag(IEnumerable<Tag> tags)
+        {
+            var commentTag = tags.SingleOrDefault(x => string.Equals(x.Name, "comment", StringComparison.OrdinalIgnoreCase));
+
+            Assert.NotNull(commentTag);
+            Assert.Equal(EXIFTOOL_ENCODED_COMMENT.Replace("\"", string.Empty), commentTag.Value);
         }
     }
 }

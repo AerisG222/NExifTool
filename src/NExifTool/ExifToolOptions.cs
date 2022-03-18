@@ -4,5 +4,6 @@ namespace NExifTool
     {
         public string ExifToolPath { get; set; } = "exiftool";
         public bool IncludeBinaryTags { get; set; }
+        public bool EscapeTagValues { get; set; }
     }
 }

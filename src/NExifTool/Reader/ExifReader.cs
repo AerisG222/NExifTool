@@ -126,6 +126,11 @@ namespace NExifTool.Reader
                 list.Add("-b");
             }
 
+            if(_opts.EscapeTagValues)
+            {
+                list.Add("-E");
+            }
+
             return list;
         }
     }
