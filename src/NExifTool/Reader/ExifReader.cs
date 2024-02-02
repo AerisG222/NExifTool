@@ -2,11 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Medallion.Shell;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 
 namespace NExifTool.Reader
@@ -22,7 +20,7 @@ namespace NExifTool.Reader
         }
 
 
-        public async Task<JObject> ReadExifAsync(Stream imageStream)
+        public async Task<JsonElement?> ReadExifAsync(Stream imageStream)
         {
             var args = GetArguments(imageStream);
             var exifDataStream = await GetExifDataAsync(args, imageStream).ConfigureAwait(false);
@@ -31,7 +29,7 @@ namespace NExifTool.Reader
         }
 
 
-        public async Task<JObject> ReadExifAsync(string imagePath)
+        public async Task<JsonElement?> ReadExifAsync(string imagePath)
         {
             var args = GetArguments(imagePath);
             var exifDataStream = await GetExifDataAsync(args, null).ConfigureAwait(false);
@@ -40,26 +38,11 @@ namespace NExifTool.Reader
         }
 
 
-        async Task<JObject> GetJsonAsync(Stream exifDataStream)
+        async Task<JsonElement?> GetJsonAsync(Stream exifDataStream)
         {
-            JToken token = null;
+            var doc = await JsonDocument.ParseAsync(exifDataStream).ConfigureAwait(false);
 
-            using(var sr = new StreamReader(exifDataStream))
-            {
-                token = await JToken.ReadFromAsync(new JsonTextReader(sr)).ConfigureAwait(false);
-            }
-
-            if(token == null)
-            {
-                return null;
-            }
-
-            if(token.Children().Count() == 1)
-            {
-                return token.Children().First() as JObject;
-            }
-
-            return null;
+            return doc?.RootElement[0];
         }
 
 
