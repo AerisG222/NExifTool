@@ -6,19 +6,16 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Medallion.Shell;
 
-
 namespace NExifTool.Reader
 {
     public class ExifReader
     {
         readonly ExifToolOptions _opts;
 
-
         public ExifReader(ExifToolOptions opts)
         {
             _opts = opts ?? throw new ArgumentNullException(nameof(opts));
         }
-
 
         public async Task<JsonElement?> ReadExifAsync(Stream imageStream)
         {
@@ -28,7 +25,6 @@ namespace NExifTool.Reader
             return await GetJsonAsync(exifDataStream).ConfigureAwait(false);
         }
 
-
         public async Task<JsonElement?> ReadExifAsync(string imagePath)
         {
             var args = GetArguments(imagePath);
@@ -37,14 +33,12 @@ namespace NExifTool.Reader
             return await GetJsonAsync(exifDataStream).ConfigureAwait(false);
         }
 
-
         async Task<JsonElement?> GetJsonAsync(Stream exifDataStream)
         {
             var doc = await JsonDocument.ParseAsync(exifDataStream).ConfigureAwait(false);
 
             return doc?.RootElement[0];
         }
-
 
         async Task<Stream> GetExifDataAsync(string[] args, Stream stream)
         {
@@ -71,7 +65,6 @@ namespace NExifTool.Reader
             }
         }
 
-
         string[] GetArguments(string rawFile)
         {
             var args = GetDefaultArguments();
@@ -81,7 +74,6 @@ namespace NExifTool.Reader
             return args.ToArray();
         }
 
-
         string[] GetArguments(Stream stream)
         {
             var args = GetDefaultArguments();
@@ -90,7 +82,6 @@ namespace NExifTool.Reader
 
             return args.ToArray();
         }
-
 
         List<string> GetDefaultArguments()
         {

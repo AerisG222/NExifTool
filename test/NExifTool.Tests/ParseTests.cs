@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Xunit;
-using NExifTool;
-
 
 namespace NExifTool.Tests
 {
@@ -30,7 +27,6 @@ namespace NExifTool.Tests
             Assert.True(res.Count(x => x.Name == "RegionExtensionsAngleInfoYaw" ) >= 1, "HasExtensionTags::3");
         }
 
-
         [Fact]
         public async void GetTagsFromImage()
         {
@@ -45,7 +41,6 @@ namespace NExifTool.Tests
 
             Assert.True(res.Count() > 0);
         }
-
 
         [Fact]
         public async void GetTagsFromImageWithKeywords()
@@ -69,7 +64,6 @@ namespace NExifTool.Tests
             Assert.Equal("Fay Canyon", keywords.List[1]);
         }
 
-
         [Fact]
         public async void GetRegionExtensionsTags()
         {
@@ -86,7 +80,6 @@ namespace NExifTool.Tests
             Assert.Equal(0.4710, Convert.ToDouble(region.List[1]));
         }
 
-
         [Fact]
         public async void TestFilenameWithSpace()
         {
@@ -95,7 +88,6 @@ namespace NExifTool.Tests
 
             Assert.True(res.Count() > 0);
         }
-
 
         [Fact]
         public async void TestExifValues()
@@ -115,7 +107,6 @@ namespace NExifTool.Tests
             Assert.Equal("0.002", expTime.NumberValue);
             Assert.Equal(.002, expTime.GetDouble());
         }
-
 
         [Fact]
         public async void TestStream()

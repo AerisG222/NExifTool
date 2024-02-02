@@ -5,7 +5,6 @@ using System.IO;
 using System.Threading.Tasks;
 using Medallion.Shell;
 
-
 namespace NExifTool.Writer
 {
     public class FileToStreamRunner
@@ -13,13 +12,11 @@ namespace NExifTool.Writer
     {
         readonly string _src;
 
-
         public FileToStreamRunner(ExifToolOptions opts, string src)
             : base(opts)
         {
             _src = src ?? throw new ArgumentNullException(nameof(src));
         }
-
 
         public override async Task<WriteResult> RunProcessAsync(IEnumerable<Operation> updates)
         {

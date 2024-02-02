@@ -5,7 +5,6 @@ using System.Linq;
 using Xunit;
 using NExifTool.Writer;
 
-
 namespace NExifTool.Tests
 {
     public class WriteTests
@@ -28,7 +27,6 @@ namespace NExifTool.Tests
             new SetOperation(new Tag("comment", COMMENT_ENCODED)),
         };
 
-
         [Fact]
         public async void StreamToStreamWriteTest()
         {
@@ -43,7 +41,6 @@ namespace NExifTool.Tests
 
             ValidateTags(await et.GetTagsAsync(result.Output));
         }
-
 
         [Fact]
         public async void StreamToFileWriteTest()
@@ -63,7 +60,6 @@ namespace NExifTool.Tests
             File.Delete(testfile);
         }
 
-
         [Fact]
         public async void FileToStreamWriteTest()
         {
@@ -77,7 +73,6 @@ namespace NExifTool.Tests
 
             ValidateTags(await et.GetTagsAsync(result.Output));
         }
-
 
         [Fact]
         public async void FileToFileWriteTest()
@@ -94,7 +89,6 @@ namespace NExifTool.Tests
 
             File.Delete("file_to_file_test.jpg");
         }
-
 
         [Fact]
         public async void FileToFileWriteTestEncoded()
@@ -116,7 +110,6 @@ namespace NExifTool.Tests
             File.Delete("file_to_file_encoded_test.jpg");
         }
 
-
         [Fact]
         public async void OverwriteTest()
         {
@@ -135,7 +128,6 @@ namespace NExifTool.Tests
             File.Delete("overwrite_test.jpg");
         }
 
-
         [Fact]
         public async void OverwriteOriginalInPlaceTest()
         {
@@ -153,7 +145,6 @@ namespace NExifTool.Tests
 
             File.Delete("overwrite_original_in_place_test.jpg");
         }
-
 
         void ValidateTags(IEnumerable<Tag> tags)
         {

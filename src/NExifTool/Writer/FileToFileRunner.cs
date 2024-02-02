@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using Medallion.Shell;
 
-
 namespace NExifTool.Writer
 {
     public class FileToFileRunner
@@ -66,7 +65,6 @@ namespace NExifTool.Writer
             }
         }
 
-
         protected string GetOverwriteArgument(FileWriteMode mode)
         {
             switch(mode)
@@ -79,7 +77,6 @@ namespace NExifTool.Writer
                     throw new InvalidOperationException("Unexpected overwrite mode!");
             }
         }
-
 
         bool IsOverwriteMode(FileWriteMode mode)
         {

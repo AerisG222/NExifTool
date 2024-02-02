@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
-using Medallion.Shell;
-
 
 namespace NExifTool.Writer
 {
@@ -14,14 +11,12 @@ namespace NExifTool.Writer
         readonly Stream _src;
         readonly string _dst;
 
-
         public StreamToFileRunner(ExifToolOptions opts, Stream src, string dst)
             : base(opts)
         {
             _src = src ?? throw new ArgumentNullException(nameof(src));
             _dst = dst ?? throw new ArgumentNullException(nameof(dst));
         }
-
 
         public override async Task<WriteResult> RunProcessAsync(IEnumerable<Operation> updates)
         {

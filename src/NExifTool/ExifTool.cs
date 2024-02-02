@@ -7,19 +7,16 @@ using NExifTool.Parser;
 using NExifTool.Reader;
 using NExifTool.Writer;
 
-
 namespace NExifTool
 {
     public class ExifTool
     {
         readonly ExifToolOptions _opts;
 
-
         public ExifTool(ExifToolOptions opts)
         {
             _opts = opts ?? throw new ArgumentNullException(nameof(opts));
         }
-
 
         public async Task<IEnumerable<Tag>> GetTagsAsync(string srcPath)
         {
@@ -31,7 +28,6 @@ namespace NExifTool
 
             return parser.ParseTags(exifJson);
         }
-
 
         public async Task<IEnumerable<Tag>> GetTagsAsync(Stream stream)
         {
@@ -47,7 +43,6 @@ namespace NExifTool
             return parser.ParseTags(exifJson);
         }
 
-
         public Task<WriteResult> OverwriteTagsAsync(string srcPath, IEnumerable<Operation> updates, FileWriteMode writeMode)
         {
             VerifySourceFile(srcPath);
@@ -57,7 +52,6 @@ namespace NExifTool
 
             return runner.RunProcessAsync(updates);
         }
-
 
         public Task<WriteResult> WriteTagsAsync(string srcPath, IEnumerable<Operation> updates, string dstPath)
         {
@@ -69,7 +63,6 @@ namespace NExifTool
             return runner.RunProcessAsync(updates);
         }
 
-
         public Task<WriteResult> WriteTagsAsync(string srcPath, IEnumerable<Operation> updates)
         {
             VerifySourceFile(srcPath);
@@ -80,7 +73,6 @@ namespace NExifTool
             return runner.RunProcessAsync(updates);
         }
 
-
         public Task<WriteResult> WriteTagsAsync(Stream src, IEnumerable<Operation> updates)
         {
             VerifyUpdates(updates);
@@ -89,7 +81,6 @@ namespace NExifTool
 
             return runner.RunProcessAsync(updates);
         }
-
 
         public Task<WriteResult> WriteTagsAsync(Stream src, IEnumerable<Operation> updates, string dstPath)
         {
@@ -100,7 +91,6 @@ namespace NExifTool
             return runner.RunProcessAsync(updates);
         }
 
-
         void VerifySourceFile(string srcPath)
         {
             if(!File.Exists(srcPath))
@@ -108,7 +98,6 @@ namespace NExifTool
                 throw new FileNotFoundException("Please make sure the image exists.", srcPath);
             }
         }
-
 
         void VerifyUpdates(IEnumerable<Operation> updates)
         {

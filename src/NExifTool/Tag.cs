@@ -14,7 +14,6 @@ namespace NExifTool
             "yyyy:MM:dd HH:mm:ss"
         };
 
-
         public string Id { get; }
         public string Name { get; }
         public string Description { get; }
@@ -28,7 +27,6 @@ namespace NExifTool
         public bool IsDouble { get => TryGetDouble() != null; }
         public bool IsDate { get => TryGetDateTime() != null; }
         public bool IsList { get => List != null; }
-
 
         public Tag(
             string id,
@@ -50,7 +48,6 @@ namespace NExifTool
             List = list?.ToList()?.AsReadOnly();
         }
 
-
         public Tag(string name, string value)
         {
             if(string.IsNullOrWhiteSpace(name))
@@ -67,7 +64,6 @@ namespace NExifTool
             Value = value;
         }
 
-
         public Tag(string name, double value)
         {
             if(string.IsNullOrWhiteSpace(name))
@@ -78,7 +74,6 @@ namespace NExifTool
             Name = name;
             NumberValue = value.ToString();
         }
-
 
         public Tag(string name, IEnumerable<string> list)
         {
@@ -106,7 +101,6 @@ namespace NExifTool
             return null;
         }
 
-
         public long GetInt64()
         {
             var val = TryGetInt64();
@@ -118,7 +112,6 @@ namespace NExifTool
 
             return (long)val;
         }
-
 
         public double? TryGetDouble()
         {
@@ -135,7 +128,6 @@ namespace NExifTool
             return null;
         }
 
-
         public double GetDouble()
         {
             var val = TryGetDouble();
@@ -148,7 +140,6 @@ namespace NExifTool
             return (double)val;
         }
 
-
         public DateTime? TryGetDateTime()
         {
             if (DateTime.TryParseExact(Value, DATE_FORMATS, CultureInfo.CurrentCulture, DateTimeStyles.None, out var val))
@@ -158,7 +149,6 @@ namespace NExifTool
 
             return null;
         }
-
 
         public DateTime GetDateTime()
         {
@@ -172,7 +162,6 @@ namespace NExifTool
             return (DateTime)val;
         }
 
-
         public byte GetByte() => Convert.ToByte(GetInt64());
         public short GetInt16() => Convert.ToInt16(GetInt64());
         public ushort GetUInt16() => Convert.ToUInt16(GetInt64());
@@ -181,7 +170,6 @@ namespace NExifTool
         public ulong GetUInt64() => Convert.ToUInt64(GetInt64());
 
         public float GetSingle() => Convert.ToSingle(GetDouble());
-
 
         public byte? TryGetByte()
         {
@@ -195,7 +183,6 @@ namespace NExifTool
             }
         }
 
-
         public short? TryGetInt16()
         {
             try
@@ -207,7 +194,6 @@ namespace NExifTool
                 return null;
             }
         }
-
 
         public ushort? TryGetUInt16()
         {
@@ -221,7 +207,6 @@ namespace NExifTool
             }
         }
 
-
         public int? TryGetInt32()
         {
             try
@@ -233,7 +218,6 @@ namespace NExifTool
                 return null;
             }
         }
-
 
         public uint? TryGetUInt32()
         {
@@ -247,7 +231,6 @@ namespace NExifTool
             }
         }
 
-
         public ulong? TryGetUInt64()
         {
             try
@@ -259,7 +242,6 @@ namespace NExifTool
                 return null;
             }
         }
-
 
         public float? TryGetSingle()
         {
@@ -273,7 +255,6 @@ namespace NExifTool
             }
         }
 
-
         public byte[] GetBinary()
         {
             var bin = TryGetBinary();
@@ -285,7 +266,6 @@ namespace NExifTool
 
             return bin;
         }
-
 
         public byte[] TryGetBinary()
         {
@@ -308,7 +288,6 @@ namespace NExifTool
                 return null;
             }
         }
-
 
         internal string ValueToWrite()
         {

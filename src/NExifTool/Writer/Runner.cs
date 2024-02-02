@@ -3,19 +3,16 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-
 namespace NExifTool.Writer
 {
     public abstract class Runner
     {
         protected readonly ExifToolOptions _options;
 
-
         public Runner(ExifToolOptions opts)
         {
             _options = opts ?? throw new ArgumentNullException(nameof(opts));
         }
-
 
         protected string GetUpdateArgs(IEnumerable<Operation> updates)
         {
@@ -40,7 +37,6 @@ namespace NExifTool.Writer
 
             return sb.ToString();
         }
-
 
         protected string EscapeFilePath(string filename)
         {

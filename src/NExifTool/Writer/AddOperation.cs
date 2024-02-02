@@ -1,6 +1,3 @@
-using System;
-
-
 namespace NExifTool.Writer
 {
     public class AddOperation
@@ -11,7 +8,6 @@ namespace NExifTool.Writer
         {
 
         }
-
 
         internal override string ToArg() => $"-{Target.Name}+=\"{Target.ValueToWrite()}\"";
     }

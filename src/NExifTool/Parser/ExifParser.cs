@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 
-
 namespace NExifTool.Parser
 {
     public class ExifParser
@@ -37,7 +36,6 @@ namespace NExifTool.Parser
 
             return list;
         }
-
 
         Tag Parse(string objName, JsonElement tagJson)
         {
@@ -92,7 +90,6 @@ namespace NExifTool.Parser
                 list
             );
         }
-
 
         string ParseValue(JsonElement el)
         {
