@@ -36,7 +36,7 @@ namespace NExifTool.Tests
 
             foreach(var tag in res)
             {
-                Console.WriteLine($"{tag.Name} : {tag.Description} : {tag.Value}");
+                Console.WriteLine($"{tag.Name} : {tag.Description} : {tag.Group} : {tag.TableName} : {tag.Value}");
             }
 
             Assert.True(res.Count() > 0);
