@@ -2,7 +2,7 @@
     <PropertyGroup>
         <Description>.Net wrapper for the excellent ExifTool</Description>
         <AssemblyTitle>NExifTool</AssemblyTitle>
-        <VersionPrefix>0.11.0</VersionPrefix>
+        <VersionPrefix>0.12.0</VersionPrefix>
         <Authors>Mike Morano &lt;mmorano@mikeandwan.us&gt;</Authors>
         <TargetFrameworks>netstandard2.0;net462</TargetFrameworks>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>

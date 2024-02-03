@@ -1,3 +1,9 @@
+# 0.12.0 (02/02/2024)
+
+- remove support for netfx 4.5 as it is now EOL and move to netstandard2.0
+- replace newtonsoft.json with system.text.json
+- update dependencies
+
 # 0.11.0 (03/18/2022)
 
 - introduce `EscapeTagValues` option to pass `-E` to exiftool to help with character encoding
